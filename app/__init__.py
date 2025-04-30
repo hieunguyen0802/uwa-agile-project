@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+# filepath: /Users/rachel/Desktop/5505_Group/uwa-agile-project/app/__init__.py
+from flask import Flask, render_template, request, redirect, url_for
 from livereload import Server
 
 app = Flask(__name__)
@@ -32,8 +33,16 @@ def data():
 def test():
     return render_template('test.html')
 
-@app.route('/login')
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@app.route('/login',  methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        return redirect(url_for('home'))
     return render_template('auth/login.html')
 
 
