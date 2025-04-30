@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="flex w-full lg:w-1/2 justify-center items-center bg-white p-6">
-        <form class="bg-white w-full max-w-sm">
+        <form class="bg-white w-full max-w-sm" action="{{ url_for('login') }}" method="POST">
             <h1 class="text-gray-800 font-bold text-2xl mb-7">Hello!</h1>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <input class="pl-2 outline-none border-none" type="text" name="" id=""
@@ -34,4 +34,5 @@
         </form>
     </div>
 </div>
+
 {% endblock %}
