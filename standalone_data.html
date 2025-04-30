@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
+    <style>
+        /* Ant Design Table Styling */
+        .ant-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .ant-table thead th {
+            background-color: #f0f2f5;
+            color: #262626;
+            font-weight: 600;
+            text-align: left;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ant-table tbody td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ant-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Chart Containers */
+        .ant-chart {
+            background-color: #ffffff;
+            border-radius: 4px;
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-placeholder {
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .chart-placeholder:hover {
+            opacity: 1;
+        }
+
+        /* Custom Tab Styling */
+        #dataTabs button {
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        #dataTabs button.active {
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        #dataTabs button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1890ff;
+        }
+
+        /* Animation for tab transitions */
+        #dataTabContent > div {
+            transition: opacity 0.3s ease;
+        }
+
+        /* File Upload Styles */
+        .upload-area {
+            border: 2px dashed #d9d9d9;
+            border-radius: 8px;
+            background-color: #fafafa;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #1890ff;
+        }
+
+        /* Custom Button Styles */
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-export:hover {
+            background-color: #096dd9;
+        }
+
+        /* Social Media Button Styles */
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .ant-chart {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #dataTabs button {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-gradient-to-tr from-blue-800 to-purple-700 shadow-md">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 py-3">
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-bold text-white">YourLogo</a>
+            <!-- Navigation -->
+            <div class="flex space-x-4">
+                <a href="#" class="text-white hover:text-blue-300">Home</a>
+                <a href="#" class="text-white hover:text-blue-300">Teams</a>
+                <a href="#" class="text-white hover:text-blue-300 font-semibold">Data</a>
+                <a href="#" class="text-white hover:text-blue-300">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 px-4">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">Tournament Data Management</h1>
+            
+            <!-- Tabs Section -->
+            <div class="border-b border-gray-200 mb-6">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="dataTabs" role="tablist">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-blue-600 rounded-t-lg active" id="upload-tab" data-tabs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="true">
+                            <i class="fas fa-upload mr-2"></i>Data Entry
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="analysis-tab" data-tabs-target="#analysis" type="button" role="tab" aria-controls="analysis" aria-selected="false">
+                            <i class="fas fa-chart-bar mr-2"></i>Data Analysis
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="share-tab" data-tabs-target="#share" type="button" role="tab" aria-controls="share" aria-selected="false">
+                            <i class="fas fa-share-alt mr-2"></i>Share Results
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Tab Content -->
+            <div id="dataTabContent">
+                <!-- Data Entry Tab Panel -->
+                <div class="block" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Manual Data Entry -->
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                                <i class="fas fa-keyboard mr-2"></i>Manual Data Entry
+                            </h2>
+                            <form>
+                                <div class="mb-4">
+                                    <label for="tournament" class="block mb-2 text-sm font-medium text-gray-700">Tournament Name</label>
+                                    <input type="text" id="tournament" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="date" class="block mb-2 text-sm font-medium text-gray-700">Date</label>
+                                    <input type="date" id="date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="team1" class="block mb-2 text-sm font-medium text-gray-700">Team 1</label>
+                                    <select id="team1" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option selected>Select team</option>
+                                        <option value="team1">Team A</option>
+                                        <option value="team2">Team B</option>
+                                        <option value="team3">Team C</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="score1" class="block mb-2 text-sm font-medium text-gray-700">Score</label>
+                                    <input type="number" id="score1" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="team2" class="block mb-2 text-sm font-medium text-gray-700">Team 2</label>
+                                    <select id="team2" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option selected>Select team</option>
+                                        <option value="team1">Team A</option>
+                                        <option value="team2">Team B</option>
+                                        <option value="team3">Team C</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="score2" class="block mb-2 text-sm font-medium text-gray-700">Score</label>
+                                    <input type="number" id="score2" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                
+                                <div class="flex justify-end">
+                                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Match Result</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- File Upload -->
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                                <i class="fas fa-file-upload mr-2"></i>Batch Upload
+                            </h2>
+                            <div class="flex items-center justify-center w-full mb-6">
+                                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-blue-50">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-2"></i>
+                                        <p class="mb-2 text-sm text-gray-700"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                        <p class="text-xs text-gray-500">CSV, XLSX, or JSON (MAX. 10MB)</p>
+                                    </div>
+                                    <input id="dropzone-file" type="file" class="hidden" accept=".csv, .xlsx, .json" />
+                                </label>
+                            </div>
+                            <div class="file-list hidden mb-4">
+                                <div class="bg-white p-3 rounded border flex justify-between items-center">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-csv text-green-500 mr-2"></i>
+                                        <span class="text-sm font-medium">tournament_data.csv</span>
+                                    </div>
+                                    <button type="button" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                    <i class="fas fa-upload mr-2"></i>Upload Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Preview Table -->
+                    <div class="mt-8">
+                        <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                            <i class="fas fa-table mr-2"></i>Recent Entries
+                        </h2>
+                        <div class="overflow-x-auto relative">
+                            <table class="ant-table w-full text-sm text-left text-gray-700">
+                                <thead class="text-xs text-white uppercase bg-blue-700">
+                                    <tr>
+                                        <th scope="col" class="py-3 px-6">Tournament</th>
+                                        <th scope="col" class="py-3 px-6">Date</th>
+                                        <th scope="col" class="py-3 px-6">Team 1</th>
+                                        <th scope="col" class="py-3 px-6">Score</th>
+                                        <th scope="col" class="py-3 px-6">Team 2</th>
+                                        <th scope="col" class="py-3 px-6">Score</th>
+                                        <th scope="col" class="py-3 px-6">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                        <td class="py-4 px-6">Spring Cup</td>
+                                        <td class="py-4 px-6">2025-04-15</td>
+                                        <td class="py-4 px-6">Team A</td>
+                                        <td class="py-4 px-6">3</td>
+                                        <td class="py-4 px-6">Team B</td>
+                                        <td class="py-4 px-6">1</td>
+                                        <td class="py-4 px-6">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-2">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                        <td class="py-4 px-6">Spring Cup</td>
+                                        <td class="py-4 px-6">2025-04-16</td>
+                                        <td class="py-4 px-6">Team C</td>
+                                        <td class="py-4 px-6">2</td>
+                                        <td class="py-4 px-6">Team A</td>
+                                        <td class="py-4 px-6">2</td>
+                                        <td class="py-4 px-6">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-2">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-white hover:bg-gray-50">
+                                        <td class="py-4 px-6">Spring Cup</td>
+                                        <td class="py-4 px-6">2025-04-17</td>
+                                        <td class="py-4 px-6">Team B</td>
+                                        <td class="py-4 px-6">0</td>
+                                        <td class="py-4 px-6">Team C</td>
+                                        <td class="py-4 px-6">1</td>
+                                        <td class="py-4 px-6">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-2">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Analysis Tab Panel -->
+                <div class="hidden" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Team Performance Chart -->
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Team Performance</h3>
+                            <div class="ant-chart h-80 bg-gray-50 rounded flex items-center justify-center">
+                                <!-- This would be replaced with Ant Design Charts in real implementation -->
+                                <div class="chart-placeholder">
+                                    <img src="https://gw.alipayobjects.com/zos/rmsportal/xyYNiRxQEBnNgXmAKmNL.png" alt="Team Performance Bar Chart" class="w-full h-64 object-contain">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Player Statistics -->
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Top Players</h3>
+                            <div class="ant-chart h-80 bg-gray-50 rounded flex items-center justify-center">
+                                <!-- This would be replaced with Ant Design Charts in real implementation -->
+                                <div class="chart-placeholder">
+                                    <img src="https://gw.alipayobjects.com/zos/rmsportal/XBMbhpopQzKwfEXGxDJp.png" alt="Player Statistics Chart" class="w-full h-64 object-contain">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Rankings Table -->
+                    <div class="bg-white p-4 rounded-lg shadow mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Team Rankings</h3>
+                        <div class="overflow-x-auto">
+                            <table class="ant-table w-full text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Rank</th>
+                                        <th class="px-4 py-3 text-left">Team</th>
+                                        <th class="px-4 py-3 text-right">Played</th>
+                                        <th class="px-4 py-3 text-right">Won</th>
+                                        <th class="px-4 py-3 text-right">Drawn</th>
+                                        <th class="px-4 py-3 text-right">Lost</th>
+                                        <th class="px-4 py-3 text-right">GF</th>
+                                        <th class="px-4 py-3 text-right">GA</th>
+                                        <th class="px-4 py-3 text-right">GD</th>
+                                        <th class="px-4 py-3 text-right">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3">1</td>
+                                        <td class="px-4 py-3 font-medium">Team C</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">0</td>
+                                        <td class="px-4 py-3 text-right">3</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">+1</td>
+                                        <td class="px-4 py-3 text-right font-medium">4</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3">2</td>
+                                        <td class="px-4 py-3 font-medium">Team A</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">0</td>
+                                        <td class="px-4 py-3 text-right">5</td>
+                                        <td class="px-4 py-3 text-right">3</td>
+                                        <td class="px-4 py-3 text-right">+2</td>
+                                        <td class="px-4 py-3 text-right font-medium">4</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-3">3</td>
+                                        <td class="px-4 py-3 font-medium">Team B</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">0</td>
+                                        <td class="px-4 py-3 text-right">0</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">4</td>
+                                        <td class="px-4 py-3 text-right">-3</td>
+                                        <td class="px-4 py-3 text-right font-medium">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Individual Player Statistics -->
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Player Statistics</h3>
+                        <div class="overflow-x-auto">
+                            <table class="ant-table w-full text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Player</th>
+                                        <th class="px-4 py-3 text-left">Team</th>
+                                        <th class="px-4 py-3 text-right">Goals</th>
+                                        <th class="px-4 py-3 text-right">Assists</th>
+                                        <th class="px-4 py-3 text-right">Shots</th>
+                                        <th class="px-4 py-3 text-right">Pass Accuracy</th>
+                                        <th class="px-4 py-3 text-right">Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium">John Smith</td>
+                                        <td class="px-4 py-3">Team A</td>
+                                        <td class="px-4 py-3 text-right">3</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">12</td>
+                                        <td class="px-4 py-3 text-right">87%</td>
+                                        <td class="px-4 py-3 text-right">8.5</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium">Mike Johnson</td>
+                                        <td class="px-4 py-3">Team C</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">2</td>
+                                        <td class="px-4 py-3 text-right">8</td>
+                                        <td class="px-4 py-3 text-right">92%</td>
+                                        <td class="px-4 py-3 text-right">8.2</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium">Alex Thompson</td>
+                                        <td class="px-4 py-3">Team B</td>
+                                        <td class="px-4 py-3 text-right">1</td>
+                                        <td class="px-4 py-3 text-right">0</td>
+                                        <td class="px-4 py-3 text-right">5</td>
+                                        <td class="px-4 py-3 text-right">79%</td>
+                                        <td class="px-4 py-3 text-right">7.4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Share Results Tab Panel -->
+                <div class="hidden" id="share" role="tabpanel" aria-labelledby="share-tab">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Export Options -->
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                                <i class="fas fa-file-export mr-2"></i>Export Data
+                            </h2>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded border flex justify-between items-center hover:shadow-md transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-excel text-green-600 text-2xl mr-3"></i>
+                                        <div>
+                                            <h3 class="font-medium">Excel Spreadsheet</h3>
+                                            <p class="text-sm text-gray-600">Export all data as XLSX file</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center">
+                                        <i class="fas fa-download mr-2"></i> Export
+                                    </button>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border flex justify-between items-center hover:shadow-md transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-csv text-blue-600 text-2xl mr-3"></i>
+                                        <div>
+                                            <h3 class="font-medium">CSV File</h3>
+                                            <p class="text-sm text-gray-600">Export all data as CSV file</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
+                                        <i class="fas fa-download mr-2"></i> Export
+                                    </button>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border flex justify-between items-center hover:shadow-md transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-pdf text-red-600 text-2xl mr-3"></i>
+                                        <div>
+                                            <h3 class="font-medium">PDF Report</h3>
+                                            <p class="text-sm text-gray-600">Generate comprehensive PDF report</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 flex items-center">
+                                        <i class="fas fa-download mr-2"></i> Generate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Share Options -->
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                                <i class="fas fa-share-alt mr-2"></i>Share Results
+                            </h2>
+                            
+                            <div class="mb-6">
+                                <label for="share-link" class="block mb-2 text-sm font-medium text-gray-700">Share Link</label>
+                                <div class="flex">
+                                    <input type="text" id="share-link" value="https://tournament.example.com/results/12345" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                                    <button class="bg-blue-700 text-white px-4 rounded-r-lg hover:bg-blue-800 flex items-center">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg mb-6">
+                                <h3 class="text-base font-medium mb-3">Share via Email</h3>
+                                <div class="mb-4">
+                                    <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email Addresses</label>
+                                    <input type="text" id="email" placeholder="Enter email addresses separated by commas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="message" class="block mb-2 text-sm font-medium text-gray-700">Message (Optional)</label>
+                                    <textarea id="message" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Add a personal message"></textarea>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                        <i class="fas fa-paper-plane mr-2"></i>Send Email
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg">
+                                <h3 class="text-base font-medium mb-3">Share to Social Media</h3>
+                                <div class="flex space-x-2">
+                                    <button class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </button>
+                                    <button class="bg-blue-400 text-white p-3 rounded-full hover:bg-blue-500">
+                                        <i class="fab fa-twitter"></i>
+                                    </button>
+                                    <button class="bg-red-600 text-white p-3 rounded-full hover:bg-red-700">
+                                        <i class="fab fa-youtube"></i>
+                                    </button>
+                                    <button class="bg-pink-600 text-white p-3 rounded-full hover:bg-pink-700">
+                                        <i class="fab fa-instagram"></i>
+                                    </button>
+                                    <button class="bg-blue-700 text-white p-3 rounded-full hover:bg-blue-800">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Preview for Sharing -->
+                    <div class="mt-8 bg-white p-6 rounded-lg shadow">
+                        <h2 class="text-xl font-semibold mb-4 text-blue-800">Preview</h2>
+                        
+                        <div class="border rounded-lg p-4 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold">Spring Cup Tournament 2025</h3>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Completed</span>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-700">
+                                    <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                        <tr>
+                                            <th scope="col" class="px-4 py-3">Team</th>
+                                            <th scope="col" class="px-4 py-3 text-right">P</th>
+                                            <th scope="col" class="px-4 py-3 text-right">W</th>
+                                            <th scope="col" class="px-4 py-3 text-right">D</th>
+                                            <th scope="col" class="px-4 py-3 text-right">L</th>
+                                            <th scope="col" class="px-4 py-3 text-right">Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="bg-white border-b">
+                                            <td class="px-4 py-3 font-medium">Team C</td>
+                                            <td class="px-4 py-3 text-right">2</td>
+                                            <td class="px-4 py-3 text-right">1</td>
+                                            <td class="px-4 py-3 text-right">1</td>
+                                            <td class="px-4 py-3 text-right">0</td>
+                                            <td class="px-4 py-3 text-right font-medium">4</td>
+                                        </tr>
+                                        <tr class="bg-white border-b">
+                                            <td class="px-4 py-3 font-medium">Team A</td>
+                                            <td class="px-4 py-3 text-right">2</td>
+                                            <td class="px-4 py-3 text-right">1</td>
+                                            <td class="px-4 py-3 text-right">1</td>
+                                            <td class="px-4 py-3 text-right">0</td>
+                                            <td class="px-4 py-3 text-right font-medium">4</td>
+                                        </tr>
+                                        <tr class="bg-white">
+                                            <td class="px-4 py-3 font-medium">Team B</td>
+                                            <td class="px-4 py-3 text-right">2</td>
+                                            <td class="px-4 py-3 text-right">0</td>
+                                            <td class="px-4 py-3 text-right">0</td>
+                                            <td class="px-4 py-3 text-right">2</td>
+                                            <td class="px-4 py-3 text-right font-medium">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h4 class="font-medium mb-2">Results</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded">
+                                        <div class="w-2/5 text-right">Team A <span class="font-bold">3</span></div>
+                                        <div class="w-1/5 text-center">vs</div>
+                                        <div class="w-2/5">
+                                            <span class="font-bold">1</span> Team B
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded">
+                                        <div class="w-2/5 text-right">Team C <span class="font-bold">2</span></div>
+                                        <div class="w-1/5 text-center">vs</div>
+                                        <div class="w-2/5">
+                                            <span class="font-bold">2</span> Team A
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded">
+                                        <div class="w-2/5 text-right">Team B <span class="font-bold">0</span></div>
+                                        <div class="w-1/5 text-center">vs</div>
+                                        <div class="w-2/5">
+                                            <span class="font-bold">1</span> Team C
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tab Functionality -->
+    <script>
+        // Simple tabs functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabButtons = document.querySelectorAll('#dataTabs button');
+            const tabPanels = document.querySelectorAll('#dataTabContent > div');
+            
+            tabButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    // Hide all tab panels
+                    tabPanels.forEach((panel) => {
+                        panel.classList.add('hidden');
+                    });
+                    
+                    // Remove active state from all buttons
+                    tabButtons.forEach((btn) => {
+                        btn.classList.remove('active', 'border-blue-600');
+                        btn.classList.add('border-transparent');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    
+                    // Show the selected tab panel
+                    const targetId = button.getAttribute('data-tabs-target').substring(1);
+                    const targetPanel = document.getElementById(targetId);
+                    targetPanel.classList.remove('hidden');
+                    
+                    // Set active state on clicked button
+                    button.classList.add('active', 'border-blue-600');
+                    button.classList.remove('border-transparent');
+                    button.setAttribute('aria-selected', 'true');
+                });
+            });
+            
+            // File upload preview
+            const dropzone = document.getElementById('dropzone-file');
+            const fileList = document.querySelector('.file-list');
+            
+            if (dropzone) {
+                dropzone.addEventListener('change', () => {
+                    if (dropzone.files.length > 0) {
+                        fileList.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

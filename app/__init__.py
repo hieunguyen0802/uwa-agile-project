@@ -1,3 +1,4 @@
+# filepath: /Users/rachel/Desktop/5505_Group/uwa-agile-project/app/__init__.py
 from flask import Flask, render_template, request, redirect, url_for
 from livereload import Server
 
@@ -7,6 +8,10 @@ app.debug = True
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/simple')
+def simple():
+    return render_template('simple.html')
 
 @app.route('/squad')
 def squad():
@@ -19,6 +24,14 @@ def upload():
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/data')
+def data():
+    return render_template('data.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 @app.route('/profile')
 def profile():

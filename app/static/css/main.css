@@ -1,3 +1,6 @@
+/* Import page-specific stylesheets */
+@import url('./data.css');
+
 body{
     margin-top:20px;
     background: #f6f9fc;
