@@ -8,6 +8,10 @@ app.debug = True
 def home():
     return render_template('index.html')
 
+@app.route('/simple')
+def simple():
+    return render_template('simple.html')
+
 @app.route('/squad')
 def squad():
     return render_template('squad.html')
@@ -19,6 +23,14 @@ def upload():
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/data')
+def data():
+    return render_template('data.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 @app.route('/login')
 def login():
