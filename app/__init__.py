@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from livereload import Server
 
 app = Flask(__name__)
@@ -24,8 +24,12 @@ def dashboard():
 def profile():
     return render_template('profile.html')
 
-@app.route('/login')
+@app.route('/login',  methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        return redirect(url_for('home'))
     return render_template('auth/login.html')
 
 
