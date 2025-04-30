@@ -20,6 +20,10 @@ def upload():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
 @app.route('/login')
 def login():
     return render_template('auth/login.html')
