@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css">
 
 </head>
 
@@ -29,7 +30,7 @@
           
               <!-- Data Link -->
               <li>
-                <a href="#" class="block py-2 px-3 text-white hover:text-blue-300 transition-colors duration-300">
+                <a href="{{ url_for('data') }}" class="block py-2 px-3 text-white hover:text-blue-300 transition-colors duration-300">
                   Data
                 </a>
               </li>
@@ -73,7 +74,7 @@
         {% endblock %}
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>
