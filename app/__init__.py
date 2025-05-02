@@ -5,9 +5,9 @@ import json
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = 'your_secret_key'  # 用于flash消息
+app.secret_key = 'your_secret_key'  # For flash messages
 
-# 模拟用户数据库
+# Mock user database
 users = {
     'john.doe@example.com': {'name': 'John Doe', 'id': 1},
     'jane.smith@example.com': {'name': 'Jane Smith', 'id': 2},
@@ -15,7 +15,7 @@ users = {
     'emma.williams@example.com': {'name': 'Emma Williams', 'id': 4},
 }
 
-# 模拟仪表板共享数据
+# Mock dashboard sharing data
 shared_dashboards = []
 
 @app.route('/')
@@ -39,26 +39,18 @@ def team_detail(team_id):
     # In a real app, you would retrieve team data based on team_id
     return render_template('SingleTeam.html')
 
-@app.route('/upload')
-def upload():
-    return render_template('upload.html')
+@app.route('/SingleTeam')
+def single_team():
+    # This route supports the query parameter format: /SingleTeam?team=TeamName
+    return render_template('SingleTeam.html')
 
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/shared-dashboards')
-def shared_dashboards_page():
-    # 在实际应用中，这里应该获取当前用户共享的和被共享的仪表板
-    return render_template('shared-dashboards.html')
-
 @app.route('/data')
 def data():
     return render_template('data.html')
-
-@app.route('/test')
-def test():
-    return render_template('test.html')
 
 @app.route('/profile')
 def profile():
@@ -79,44 +71,50 @@ def signup():
 
 @app.route('/share-dashboard', methods=['POST'])
 def share_dashboard():
-    """处理仪表板共享请求"""
+    """Handle dashboard sharing request"""
     if request.method == 'POST':
         dashboard_name = request.form.get('dashboardName')
         shared_with_json = request.form.get('sharedWith')
         permission_level = request.form.get('permissionLevel')
         note = request.form.get('note')
         
-        # 解析共享用户列表
+        # Parse the shared users list
         try:
             shared_with = json.loads(shared_with_json)
         except:
             shared_with = []
             
-        # 验证接收者邮箱是否存在
+        # Validate recipient emails exist
         invalid_emails = [email for email in shared_with if email not in users]
         
         if invalid_emails:
-            flash(f"The following emails are not registered users: {', '.join(invalid_emails)}")
-            return redirect(url_for('dashboard'))
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': False, 
+                    'message': f"The following emails are not registered users: {', '.join(invalid_emails)}"
+                })
+            else:
+                flash(f"The following emails are not registered users: {', '.join(invalid_emails)}")
+                return redirect(url_for('dashboard'))
             
-        # 创建共享记录
+        # Create sharing record
         dashboard = {
             'id': len(shared_dashboards) + 1,
             'name': dashboard_name,
-            'creator': 'current_user@example.com',  # 在实际应用中，这应该是当前登录用户
+            'creator': 'current_user@example.com',  # In a real application, this should be the current logged-in user
             'shared_with': shared_with,
             'permission_level': permission_level,
             'note': note,
-            'created_at': '2025-05-01'  # 在实际应用中，这应该使用 datetime.now()
+            'created_at': '2025-05-01'  # In a real application, this should use datetime.now()
         }
         
         shared_dashboards.append(dashboard)
         
-        # 将响应返回为JSON
+        # Return response as JSON for AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': True, 'message': 'Dashboard shared successfully'})
         
-        # 非AJAX请求返回重定向
+        # Non-AJAX request returns redirect
         flash('Dashboard shared successfully!')
         return redirect(url_for('dashboard'))
 
