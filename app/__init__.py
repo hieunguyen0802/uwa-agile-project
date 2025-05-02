@@ -8,6 +8,7 @@ from .models import db, User, Team, Match, Tournament   # import after db instan
 from .views.pages import pages_bp
 from .views.debug import debug_bp
 from .views.api import api_bp   
+from .views.auth import auth_bp
 import json
 
 login_manager = LoginManager()
@@ -25,6 +26,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "pages.login" # change this
+    # login_manager.login_view = "auth.login" 
     
     @login_manager.user_loader
     def load_user(uid):
@@ -33,6 +35,7 @@ def create_app():
     app.register_blueprint(pages_bp)
     app.register_blueprint(debug_bp) 
     app.register_blueprint(api_bp, url_prefix="/api") 
+    app.register_blueprint(auth_bp)   
     @app.cli.command("seed")
     def seed():
         db.drop_all()
