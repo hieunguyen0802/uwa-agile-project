@@ -32,90 +32,103 @@
         <div class="block" id="upload" role="tabpanel" aria-labelledby="upload-tab">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Manual Data Entry -->
-                <div class="bg-blue-50 p-6 rounded-lg">
-                    <h2 class="text-xl font-semibold mb-4 text-blue-800">
-                        <i class="fas fa-keyboard mr-2"></i>Manual Data Entry
-                    </h2>
-                    <form>
-                        <div class="mb-4">
-                            <label for="tournament" class="block mb-2 text-sm font-medium text-gray-700">Tournament Name</label>
-                            <input type="text" id="tournament" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="date" class="block mb-2 text-sm font-medium text-gray-700">Date</label>
-                            <input type="date" id="date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="team1" class="block mb-2 text-sm font-medium text-gray-700">Team 1</label>
-                            <select id="team1" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                <option selected>Select team</option>
-                                <option value="team1">Team A</option>
-                                <option value="team2">Team B</option>
-                                <option value="team3">Team C</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="score1" class="block mb-2 text-sm font-medium text-gray-700">Score</label>
-                            <input type="number" id="score1" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="team2" class="block mb-2 text-sm font-medium text-gray-700">Team 2</label>
-                            <select id="team2" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                <option selected>Select team</option>
-                                <option value="team1">Team A</option>
-                                <option value="team2">Team B</option>
-                                <option value="team3">Team C</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="score2" class="block mb-2 text-sm font-medium text-gray-700">Score</label>
-                            <input type="number" id="score2" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        </div>
-                        
-                        <div class="flex justify-end">
-                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Match Result</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <!-- File Upload -->
-                <div class="bg-blue-50 p-6 rounded-lg">
-                    <h2 class="text-xl font-semibold mb-4 text-blue-800">
-                        <i class="fas fa-file-upload mr-2"></i>Batch Upload
-                    </h2>
-                    <div class="flex items-center justify-center w-full mb-6">
-                        <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-blue-50">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-2"></i>
-                                <p class="mb-2 text-sm text-gray-700"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p class="text-xs text-gray-500">CSV, XLSX, or JSON (MAX. 10MB)</p>
-                            </div>
-                            <input id="dropzone-file" type="file" class="hidden" accept=".csv, .xlsx, .json" />
+                <div class="bg-blue-50 p-6 rounded-lg w-full">
+                  <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                    <i class="fas fa-keyboard mr-2"></i>Manual Match Entry
+                  </h2>
+          
+                  <form id="matchForm" class="space-y-4">
+          
+                    <!-- Tournament name stays purely client‑side for now -->
+                    <div>
+                      <label for="tournament" class="block mb-1 text-sm font-medium text-gray-700">
+                        Tournament Name
+                      </label>
+                      <input
+                        type="text"
+                        id="tournament"
+                        placeholder="Optional"
+                        class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+          
+                    <div>
+                      <label for="played_on" class="block mb-1 text-sm font-medium text-gray-700">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        id="played_on"
+                        required
+                        class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+          
+                    <!-- First team + score -->
+                    <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                      <div class="flex-1">
+                        <label for="team1" class="block mb-1 text-sm font-medium text-gray-700">
+                          Team 1
                         </label>
+                        <select
+                          id="team1"
+                          required
+                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                        ></select>
+                      </div>
+          
+                      <div class="w-full md:w-24 mt-4 md:mt-0">
+                        <label for="score1" class="block mb-1 text-sm font-medium text-gray-700">
+                          Score
+                        </label>
+                        <input
+                          type="number"
+                          id="score1"
+                          min="0"
+                          required
+                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
-                    <div class="file-list hidden mb-4">
-                        <div class="bg-white p-3 rounded border flex justify-between items-center">
-                            <div class="flex items-center">
-                                <i class="fas fa-file-csv text-green-500 mr-2"></i>
-                                <span class="text-sm font-medium">tournament_data.csv</span>
-                            </div>
-                            <button type="button" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+          
+                    <!-- Second team + score -->
+                    <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                      <div class="flex-1">
+                        <label for="team2" class="block mb-1 text-sm font-medium text-gray-700">
+                          Team 2
+                        </label>
+                        <select
+                          id="team2"
+                          required
+                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                        ></select>
+                      </div>
+          
+                      <div class="w-full md:w-24 mt-4 md:mt-0">
+                        <label for="score2" class="block mb-1 text-sm font-medium text-gray-700">
+                          Score
+                        </label>
+                        <input
+                          type="number"
+                          id="score2"
+                          min="0"
+                          required
+                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            <i class="fas fa-upload mr-2"></i>Upload Data
-                        </button>
+          
+                    <div class="flex justify-end pt-2">
+                      <button
+                        type="submit"
+                        class="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg px-5 py-2.5 focus:ring-4 focus:ring-blue-300"
+                      >
+                        Save Match Result
+                      </button>
                     </div>
+                  </form>
                 </div>
-            </div>
+              </div>
             
             <!-- Data Preview Table -->
             <div class="mt-8">
@@ -512,14 +525,58 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
 </div>
 
 <!-- Include Ant Design (optional if using their actual components) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.js"></script> -->
 
+<!-- ---------- Module script (fetch teams + submit match) ---------- -->
+<script type="module">
+    const api = {
+      get:  (p) => fetch("/api" + p, {credentials:"include"}).then(r => r.json()),
+      post: (p, d) => fetch("/api" + p, {
+        method:"POST", credentials:"include",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(d)
+      }).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+    };
+  
+    const teamSelects = [document.getElementById("team1"), document.getElementById("team2")];
+  
+    // Populate both dropdowns with live team list
+    api.get("/teams").then(teams => {
+      const opts = teams.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+      teamSelects.forEach(sel => sel.innerHTML = `<option value="" disabled selected>Select team</option>${opts}`);
+    }).catch(err => {
+      console.error(err);
+      alert("Could not load team list.");
+    });
+  
+    // Handle form submit
+    document.getElementById("matchForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          team1_id:   Number(team1.value),
+          team2_id:   Number(team2.value),
+          team1_score: Number(score1.value),
+          team2_score: Number(score2.value),
+          played_on:   played_on.value           // ISO yyyy-mm-dd
+        };
+        await api.post("/matches", payload);
+        alert("Match saved!");
+  
+        // Clear scores only (keep teams so user can input reverse fixture quickly)
+        score1.value = score2.value = "";
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "Failed to save match.");
+      }
+    });
+  </script>
 <!-- Tab Functionality -->
 <script>
     // Simple tabs functionality

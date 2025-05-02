@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from .models import db, User, Team, Match   # import after db instance is created
 from .views.pages import pages_bp
 from .views.debug import debug_bp
+from .views.api import api_bp   
 import json
 
 login_manager = LoginManager()
@@ -31,6 +32,7 @@ def create_app():
     
     app.register_blueprint(pages_bp)
     app.register_blueprint(debug_bp) 
+    app.register_blueprint(api_bp, url_prefix="/api") 
     @app.cli.command("seed")
     def seed():
         """Insert demo data."""
