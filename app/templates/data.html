@@ -33,102 +33,70 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Manual Data Entry -->
                 <div class="bg-blue-50 p-6 rounded-lg w-full">
-                  <h2 class="text-xl font-semibold mb-4 text-blue-800">
-                    <i class="fas fa-keyboard mr-2"></i>Manual Match Entry
-                  </h2>
-          
-                  <form id="matchForm" class="space-y-4">
-          
-                    <!-- Tournament name stays purely client‑side for now -->
-                    <div>
-                      <label for="tournament" class="block mb-1 text-sm font-medium text-gray-700">
-                        Tournament Name
-                      </label>
-                      <input
-                        type="text"
-                        id="tournament"
-                        placeholder="Optional"
-                        class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-          
-                    <div>
-                      <label for="played_on" class="block mb-1 text-sm font-medium text-gray-700">
-                        Date
-                      </label>
-                      <input
-                        type="date"
-                        id="played_on"
-                        required
-                        class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-          
-                    <!-- First team + score -->
-                    <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
-                      <div class="flex-1">
-                        <label for="team1" class="block mb-1 text-sm font-medium text-gray-700">
-                          Team 1
+                    <h2 class="text-xl font-semibold mb-4 text-blue-800">
+                      <i class="fas fa-keyboard mr-2"></i>Manual Match Entry
+                    </h2>
+            
+                    <form id="matchForm" class="space-y-4">
+            
+                      <!-- Tournament -->
+                      <div>
+                        <label for="tournament" class="block mb-1 text-sm font-medium text-gray-700">
+                          Tournament
                         </label>
-                        <select
-                          id="team1"
-                          required
-                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                        ></select>
+                        <select id="tournament" required
+                                class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                          <option value="" disabled selected>Select tournament</option>
+                        </select>
                       </div>
-          
-                      <div class="w-full md:w-24 mt-4 md:mt-0">
-                        <label for="score1" class="block mb-1 text-sm font-medium text-gray-700">
-                          Score
+            
+                      <!-- Date -->
+                      <div>
+                        <label for="played_on" class="block mb-1 text-sm font-medium text-gray-700">
+                          Date
                         </label>
-                        <input
-                          type="number"
-                          id="score1"
-                          min="0"
-                          required
-                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                        />
+                        <input type="date" id="played_on" required
+                               class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
                       </div>
-                    </div>
-          
-                    <!-- Second team + score -->
-                    <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
-                      <div class="flex-1">
-                        <label for="team2" class="block mb-1 text-sm font-medium text-gray-700">
-                          Team 2
-                        </label>
-                        <select
-                          id="team2"
-                          required
-                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                        ></select>
+            
+                      <!-- Team 1 + score -->
+                      <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                        <div class="flex-1">
+                          <label for="team1" class="block mb-1 text-sm font-medium text-gray-700">Team 1</label>
+                          <select id="team1" required
+                                  class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"></select>
+                        </div>
+                        <div class="w-full md:w-24 mt-4 md:mt-0">
+                          <label for="score1" class="block mb-1 text-sm font-medium text-gray-700">Score</label>
+                          <input type="number" id="score1" min="0" required
+                                 class="w-full bg-white border border-gray-300 rounded-lg p-2.5">
+                        </div>
                       </div>
-          
-                      <div class="w-full md:w-24 mt-4 md:mt-0">
-                        <label for="score2" class="block mb-1 text-sm font-medium text-gray-700">
-                          Score
-                        </label>
-                        <input
-                          type="number"
-                          id="score2"
-                          min="0"
-                          required
-                          class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                        />
+            
+                      <!-- Team 2 + score -->
+                      <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                        <div class="flex-1">
+                          <label for="team2" class="block mb-1 text-sm font-medium text-gray-700">Team 2</label>
+                          <select id="team2" required
+                                  class="w-full bg-white border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"></select>
+                        </div>
+                        <div class="w-full md:w-24 mt-4 md:mt-0">
+                          <label for="score2" class="block mb-1 text-sm font-medium text-gray-700">Score</label>
+                          <input type="number" id="score2" min="0" required
+                                 class="w-full bg-white border border-gray-300 rounded-lg p-2.5">
+                        </div>
                       </div>
-                    </div>
-          
-                    <div class="flex justify-end pt-2">
-                      <button
-                        type="submit"
-                        class="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg px-5 py-2.5 focus:ring-4 focus:ring-blue-300"
-                      >
-                        Save Match Result
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+            
+                      <!-- Submit -->
+                      <div class="flex justify-end pt-2">
+                        <button type="submit"
+                                class="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg px-5 py-2.5">
+                          Save Match Result
+                        </button>
+                      </div>
+                    </form>
+                </div> 
+            </div>
             
             <!-- Data Preview Table -->
             <div class="mt-8">
@@ -533,47 +501,69 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.js"></script> -->
 
-<!-- ---------- Module script (fetch teams + submit match) ---------- -->
+<!--  script (fetch teams + submit match)  -->
 <script type="module">
+    // API helper 
     const api = {
-      get:  (p) => fetch("/api" + p, {credentials:"include"}).then(r => r.json()),
-      post: (p, d) => fetch("/api" + p, {
-        method:"POST", credentials:"include",
+      get : p => fetch(`/api${p}`).then(r => r.json()),
+      post: (p,d)=>fetch(`/api${p}`,{
+        method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(d)
-      }).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        body:JSON.stringify(d)
+      }).then(async r=>{
+        if(!r.ok) throw new Error((await r.json()).message||"API error");
+        return r.json();
+      })
     };
   
-    const teamSelects = [document.getElementById("team1"), document.getElementById("team2")];
+    // DOM refs
+    const tourSel  = document.getElementById("tournament");
+    const team1Sel = document.getElementById("team1");
+    const team2Sel = document.getElementById("team2");
   
-    // Populate both dropdowns with live team list
-    api.get("/teams").then(teams => {
-      const opts = teams.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
-      teamSelects.forEach(sel => sel.innerHTML = `<option value="" disabled selected>Select team</option>${opts}`);
-    }).catch(err => {
-      console.error(err);
-      alert("Could not load team list.");
+    // populate tournament dropdown 
+    api.get("/tournaments").then(tours=>{
+      tourSel.innerHTML += tours.map(t=>`<option value="${t.id}">${t.name}</option>`).join("");
     });
   
-    // Handle form submit
-    document.getElementById("matchForm").addEventListener("submit", async (e) => {
+    // when tournament changes, load its teams
+    tourSel.addEventListener("change", async () => {
+      const tid = tourSel.value;
+      const teams = await api.get(`/teams?tournament_id=${tid}`);
+      const opts = teams.map(t=>`<option value="${t.id}">${t.name} </option>`).join("");
+      team1Sel.innerHTML = `<option value="" disabled selected>Select team</option>` + opts;
+      team2Sel.innerHTML = `<option value="" disabled selected>Select team</option>` + opts;
+    });
+  
+    // prevent selecting the same team twice 
+    [team1Sel, team2Sel].forEach(sel=>{
+      sel.addEventListener("change", ()=>{
+        if(team1Sel.value && team1Sel.value === team2Sel.value){
+          alert("Team 1 and Team 2 must differ");
+          sel.value = "";   // reset the one just changed
+        }
+      });
+    });
+  
+    // submit match
+    document.getElementById("matchForm").addEventListener("submit", async e=>{
       e.preventDefault();
-      try {
+      try{
         const payload = {
-          team1_id:   Number(team1.value),
-          team2_id:   Number(team2.value),
-          team1_score: Number(score1.value),
-          team2_score: Number(score2.value),
-          played_on:   played_on.value           // ISO yyyy-mm-dd
+          tournament_id: Number(tourSel.value),
+          team1_id:      Number(team1Sel.value),
+          team2_id:      Number(team2Sel.value),
+          team1_score:   Number(score1.value),
+          team2_score:   Number(score2.value),
+          played_on:     played_on.value
         };
         await api.post("/matches", payload);
-        alert("Match saved!");
-  
-        // Clear scores only (keep teams so user can input reverse fixture quickly)
+        alert("Match saved & points updated!");
+        // clear scores (keep teams to speed next entry)
         score1.value = score2.value = "";
-      } catch (err) {
+      }catch(err){
         console.error(err);
-        alert(err.message || "Failed to save match.");
+        alert(err.message);
       }
     });
   </script>

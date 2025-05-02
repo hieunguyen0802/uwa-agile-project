@@ -24,37 +24,50 @@ class User(UserMixin, db.Model):
 
     def __repr__(self): return f"<User {self.username}>"
 
+class Tournament(db.Model):
+    __tablename__ = "tournaments"
+    id        = db.Column(db.Integer, primary_key=True)
+    name      = db.Column(db.String(80), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    teams   = db.relationship("Team", back_populates="tournament")
+    matches = db.relationship("Match", back_populates="tournament")
+
+    def __repr__(self): return f"<Tourney {self.name}>"
 
 class Team(db.Model):
     __tablename__ = "teams"
-    id          = db.Column(db.Integer, primary_key=True)
-    name        = db.Column(db.String(50), unique=True, nullable=False)
-    description = db.Column(db.Text)
-    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(50), unique=True, nullable=False)
+    description   = db.Column(db.Text)
+    points        = db.Column(db.Integer, default=0, nullable=False)
+
+    tournament_id = db.Column(db.Integer, db.ForeignKey("tournaments.id"), nullable=False)
+    tournament    = db.relationship("Tournament", back_populates="teams")
 
     matches_as_team1 = db.relationship("Match", foreign_keys="Match.team1_id",
                                        back_populates="team1")
     matches_as_team2 = db.relationship("Match", foreign_keys="Match.team2_id",
                                        back_populates="team2")
 
-    def __repr__(self): return f"<Team {self.name}>"
+    def __repr__(self): return f"<Team {self.name} Pts:{self.points}>"
 
 
 class Match(db.Model):
     __tablename__ = "matches"
-    id          = db.Column(db.Integer, primary_key=True)
-    team1_id    = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
-    team2_id    = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
-    team1_score = db.Column(db.Integer, nullable=False)
-    team2_score = db.Column(db.Integer, nullable=False)
-    played_on   = db.Column(db.Date,    nullable=False)
+    id            = db.Column(db.Integer, primary_key=True)
+    tournament_id = db.Column(db.Integer, db.ForeignKey("tournaments.id"), nullable=False)
 
-    team1  = db.relationship("Team", foreign_keys=[team1_id],
-                             back_populates="matches_as_team1")
-    team2  = db.relationship("Team", foreign_keys=[team2_id],
-                             back_populates="matches_as_team2")
-    shares = db.relationship("Share", back_populates="match")
+    team1_id      = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
+    team2_id      = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
+    team1_score   = db.Column(db.Integer, nullable=False)
+    team2_score   = db.Column(db.Integer, nullable=False)
+    played_on     = db.Column(db.Date,    nullable=False)
 
+    tournament = db.relationship("Tournament", back_populates="matches")
+    team1      = db.relationship("Team", foreign_keys=[team1_id], back_populates="matches_as_team1")
+    team2      = db.relationship("Team", foreign_keys=[team2_id], back_populates="matches_as_team2")
+    shares     = db.relationship("Share", back_populates="match")
     def __repr__(self):
         return f"<Match {self.team1.name} {self.team1_score}–{self.team2_score} {self.team2.name}>"
 

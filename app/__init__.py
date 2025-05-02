@@ -4,7 +4,7 @@ from livereload import Server
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 from flask_login import LoginManager
-from .models import db, User, Team, Match   # import after db instance is created
+from .models import db, User, Team, Match, Tournament   # import after db instance is created
 from .views.pages import pages_bp
 from .views.debug import debug_bp
 from .views.api import api_bp   
@@ -35,24 +35,32 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix="/api") 
     @app.cli.command("seed")
     def seed():
-        """Insert demo data."""
+        db.drop_all()
         db.create_all()
-        if not User.query.filter_by(username="demo").first():
-            demo = User(email="demo@example.com", username="demo")
-            demo.set_password("password")
 
-            lions  = Team(name="Lions",  description="Fearless and bold")
-            tigers = Team(name="Tigers", description="Always hungry")
+        # 2 tournaments
+        cup      = Tournament(name="Summer Cup")
+        league   = Tournament(name="Winter League")
 
-            match = Match(team1=lions, team2=tigers,
-                          team1_score=2, team2_score=1,
-                          played_on=date(2025, 5, 2))
+        # teams belong to tournaments
+        lions    = Team(name="Lions",  tournament=cup)
+        tigers   = Team(name="Tigers", tournament=cup)
+        dragons  = Team(name="Dragons", tournament=league)
+        sharks   = Team(name="Sharks",  tournament=league)
 
-            db.session.add_all([demo, lions, tigers, match])
-            db.session.commit()
-            print("✅  Seed data inserted.")
-        else:
-            print("ℹ️  Seed already run.")
+        demo_user = User(email="demo@example.com", username="demo")
+        demo_user.set_password("password")
+
+        # one demo match
+        m = Match(tournament=cup, team1=lions, team2=tigers,
+                  team1_score=2, team2_score=1, played_on=date(2025, 5, 2))
+        db.session.add_all([cup, league, lions, tigers, dragons, sharks, demo_user])
+        db.session.flush()  
+        
+        lions.points += 2            # winner gets 2 points
+        db.session.add(m)
+        db.session.commit()
+        print("✅  Seed complete (2 tournaments, 4 teams, 1 match).")
     
     @app.shell_context_processor
     def _shell_ctx():

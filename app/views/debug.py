@@ -9,7 +9,7 @@ def dbg_users():
 
 @debug_bp.get("/debug/teams")
 def dbg_teams():
-    return jsonify([{"id":t.id, "name":t.name, "desc":t.description} for t in Team.query.all()])
+    return jsonify([{"id":t.id, "name":t.name, "desc":t.description, "points":t.points } for t in Team.query.all()])
 
 @debug_bp.get("/debug/matches")
 def dbg_matches():
