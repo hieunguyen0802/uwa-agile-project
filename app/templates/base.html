@@ -19,6 +19,45 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css">
+    <style>
+      .nav-link {
+        position: relative;
+        padding: 0.5rem 0.75rem;
+        color: white;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-link:hover {
+        color: #93c5fd; /* blue-300 */
+        transform: translateY(-2px);
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: #93c5fd; /* blue-300 */
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+      
+      .nav-link:hover::after {
+        width: 70%;
+      }
+      
+      .nav-link.active {
+        color: #93c5fd; /* blue-300 */
+        font-weight: 500;
+      }
+      
+      .nav-link.active::after {
+        width: 70%;
+        background-color: white;
+      }
+    </style>
     {% block head %}{% endblock %}
   </head>
 
@@ -38,8 +77,19 @@
           <ul class="flex flex-col md:flex-row md:space-x-8 mt-4 md:mt-0 items-center justify-center h-full">
             <li>
               <a
+                href="/dashboard"
+                class="nav-link block transition-colors duration-300"
+                data-page="dashboard"
+              >
+                Dashboard
+              </a>
+            </li>
+            
+            <li>
+              <a
                 href="/teams"
-                class="block py-2 px-3 text-white hover:text-blue-300 transition-colors duration-300"
+                class="nav-link block transition-colors duration-300"
+                data-page="teams"
               >
                 Teams
               </a>
@@ -48,33 +98,26 @@
             <li>
               <a
                 href="/data"
-                class="block py-2 px-3 text-white hover:text-blue-300 transition-colors duration-300"
+                class="nav-link block transition-colors duration-300"
+                data-page="data"
               >
                 Data
               </a>
             </li>
 
-            <li>
-              <a
-                href="/dashboard"
-                class="block py-2 px-3 text-white hover:text-blue-300 transition-colors duration-300"
-              >
-                Dashboard
-              </a>
-            </li>
-
-            <!-- Avatar & Contact Link -->
+            <!-- Avatar Link -->
             <li>
               <a
                 href="/profile"
-                class="block py-2 px-3 text-white hover:text-blue-300 flex items-center transition-colors duration-300"
+                class="block text-white transition-colors duration-300"
+                title="Profile"
+                data-page="profile"
               >
                 <div
-                  class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-3"
+                  class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center transform transition-all duration-300 hover:bg-blue-400 hover:scale-110"
                 >
                   <span class="font-bold text-sm">AB</span> <!-- Replace with initials -->
                 </div>
-                Profile
               </a>
             </li>
           </ul>
@@ -104,5 +147,41 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get current page path
+        const currentPath = window.location.pathname;
+        
+        // Find the matching nav link and add active class
+        let activePage = 'dashboard'; // Default
+        
+        if (currentPath.includes('/dashboard')) {
+          activePage = 'dashboard';
+        } else if (currentPath.includes('/teams') || currentPath.includes('/SingleTeam')) {
+          activePage = 'teams';
+        } else if (currentPath.includes('/data')) {
+          activePage = 'data';
+        } else if (currentPath.includes('/profile')) {
+          activePage = 'profile';
+        }
+        
+        // Add active class to the matching nav link
+        const activeNavLink = document.querySelector(`.nav-link[data-page="${activePage}"]`);
+        if (activeNavLink) {
+          activeNavLink.classList.add('active');
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('menu');
+        
+        if (mobileMenuToggle) {
+          mobileMenuToggle.addEventListener('click', function() {
+            menu.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
   </body>
 </html>
