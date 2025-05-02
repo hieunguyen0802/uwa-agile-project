@@ -1,6 +1,7 @@
 from datetime import date
 from flask import Blueprint, jsonify, request, abort
 from app.models import db, Team, Match, Tournament
+from sqlalchemy import desc
 
 api_bp = Blueprint("api", __name__)
 
@@ -66,3 +67,32 @@ def create_match():
 
     db.session.commit()
     return jsonify({"id": m.id, "team1_points": t1.points, "team2_points": t2.points}), 201
+
+
+@api_bp.get("/leaderboard")
+def leaderboard():
+    """Return teams ordered by points, plus rank number."""
+    limit = request.args.get("limit", type=int) or 50
+    teams = Team.query.order_by(desc(Team.points)).limit(limit).all()
+    return jsonify([
+        {"id": t.id, "name": t.name, "points": t.points, "rank": idx + 1}
+        for idx, t in enumerate(teams)
+    ])
+    
+@api_bp.get("/leaderboard/grouped")
+def leaderboard_grouped():
+    """Return [{tournament:{id,name}, teams:[{id,name,points,rank}]}]"""
+    output = []
+    for tour in Tournament.query.order_by(Tournament.name).all():
+        teams = (Team.query
+                 .filter_by(tournament_id=tour.id)
+                 .order_by(Team.points.desc())
+                 .all())
+        output.append({
+            "tournament": {"id": tour.id, "name": tour.name},
+            "teams": [
+                {"id": t.id, "name": t.name, "points": t.points, "rank": idx + 1}
+                for idx, t in enumerate(teams)
+            ]
+        })
+    return jsonify(output)

@@ -539,7 +539,7 @@
     [team1Sel, team2Sel].forEach(sel=>{
       sel.addEventListener("change", ()=>{
         if(team1Sel.value && team1Sel.value === team2Sel.value){
-          alert("Team 1 and Team 2 must differ");
+          alert("Team 1 and Team 2 must differ");
           sel.value = "";   // reset the one just changed
         }
       });
