@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 
-# ─────────── Authentication table ────────────
+#  Authentication table (these fields should be enough, but will need to add mobile etc later)
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id         = db.Column(db.Integer, primary_key=True)
@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
     def set_password(self, raw):   self.pw_hash = generate_password_hash(raw)
     def check_password(self, raw): return check_password_hash(self.pw_hash, raw)
 
-# ───────────  Tournaments  ────────────
+# Tournaments  
 class Tournament(db.Model):
     __tablename__ = "tournaments"
     id        = db.Column(db.Integer, primary_key=True)
@@ -29,7 +29,7 @@ class Tournament(db.Model):
     teams   = db.relationship("Team",  back_populates="tournament")
     matches = db.relationship("Match", back_populates="tournament")
 
-# ───────────  Teams (with points)  ────────────
+#  Teams (with points) 
 class Team(db.Model):
     __tablename__ = "teams"
     id            = db.Column(db.Integer, primary_key=True)
@@ -45,7 +45,7 @@ class Team(db.Model):
     matches_as_team2 = db.relationship("Match", foreign_keys="Match.team2_id",
                                        back_populates="team2")
 
-# ───────────  Matches (with scorers JSON)  ────────────
+#  Matches 
 class Match(db.Model):
     __tablename__ = "matches"
     id            = db.Column(db.Integer, primary_key=True)
@@ -66,7 +66,7 @@ class Match(db.Model):
 
     shares     = db.relationship("Share", back_populates="match")  # optional: sharing feature
 
-# ───────────  Share (optional feature)  ────────────
+# Share  ( need to update this)   
 class Share(db.Model):
     __tablename__ = "shares"
     id          = db.Column(db.Integer, primary_key=True)
