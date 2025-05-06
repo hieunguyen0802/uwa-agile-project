@@ -1,8 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { api } from "/static/js/apiClient.js";
+document.addEventListener('DOMContentLoaded', async function() {
+    // getting data from the db
+    let matchData = await api.get("/matches");
+    console.log(matchData);
     // Get match data from localStorage
-    const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
+    //const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
     const teamsGrid = document.getElementById('teamsGrid');
     const emptyTeamsState = document.getElementById('emptyTeamsState');
+    
     
     // Function to generate team stats from match data
     function generateTeamStats() {
