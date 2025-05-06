@@ -23,32 +23,35 @@ app.config.update(
 app.debug = True
 app.secret_key = 'your_secret_key'  # 用于flash消息
 db.init_app(app)
+@app.before_first_request
+def _ensure_schema():
+    db.create_all() 
 app.register_blueprint(pages_bp)
 #app.register_blueprint(debug_bp) 
 app.register_blueprint(api_bp, url_prefix="/api") 
 @app.cli.command("seed")
 def seed():
-    print("⏳  Recreating database …")
+    print("Recreating database …")
     db.drop_all()
     db.create_all()
 
-    # ── users -----------------------------------------------------
+    # users 
     alice = User(email="alice@example.com", username="alice")
     bob   = User(email="bob@example.com",   username="bob")
     for u in (alice, bob):
         u.set_password("password")
 
-    # ── tournaments ----------------------------------------------
+    # tournaments 
     cup   = Tournament(name="Summer Cup")
     league= Tournament(name="Winter League")
 
-    # ── teams -----------------------------------------------------
+    # teams 
     lions   = Team(name="Lions",   tournament=cup,    points=0)
     tigers  = Team(name="Tigers",  tournament=cup,    points=0)
     dragons = Team(name="Dragons", tournament=league, points=0)
     sharks  = Team(name="Sharks",  tournament=league, points=0)
 
-    # ── matches (auto‑update points manually) --------------------
+    # matches  
     m1 = Match(
         tournament=cup,
         team1=lions, team2=tigers,
@@ -77,10 +80,10 @@ def seed():
     dragons.points += 1   # draw
     sharks.points  += 1
 
-    # ── share example --------------------------------------------
+    # share example 
     # share = Share(sender_id=alice.id, receiver_id=bob.id, match=m1)
 
-    # ── commit ----------------------------------------------------
+    # commit 
     db.session.add_all([
         alice, bob,
         cup, league,
