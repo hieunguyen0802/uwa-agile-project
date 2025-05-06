@@ -1,140 +1,101 @@
 # filepath: /Users/rachel/Desktop/5505_Group/uwa-agile-project/app/__init__.py
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from livereload import Server
+from flask_sqlalchemy import SQLAlchemy
+from datetime import date
+from flask_login import LoginManager
+from .models import db, Match, Team,Tournament,Share,User  # import after db instance is created
+from .views.pages import pages_bp
+#from .views.debug import debug_bp
+from .views.api import api_bp   
+#from .views.auth import auth_bp
 import json
 
+
+
 app = Flask(__name__)
+app.config.update(
+    SQLALCHEMY_DATABASE_URI="sqlite:///tourda.db",
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    SECRET_KEY="change-me-in-prod",
+    
+)
 app.debug = True
-app.secret_key = 'your_secret_key'  # For flash messages
+app.secret_key = 'your_secret_key'  # 用于flash消息
+db.init_app(app)
+app.register_blueprint(pages_bp)
+#app.register_blueprint(debug_bp) 
+app.register_blueprint(api_bp, url_prefix="/api") 
+@app.cli.command("seed")
+def seed():
+    print("⏳  Recreating database …")
+    db.drop_all()
+    db.create_all()
 
-# Mock user database
-users = {
-    'john.doe@example.com': {'name': 'John Doe', 'id': 1},
-    'jane.smith@example.com': {'name': 'Jane Smith', 'id': 2},
-    'robert.johnson@example.com': {'name': 'Robert Johnson', 'id': 3},
-    'emma.williams@example.com': {'name': 'Emma Williams', 'id': 4},
-}
+    # ── users -----------------------------------------------------
+    alice = User(email="alice@example.com", username="alice")
+    bob   = User(email="bob@example.com",   username="bob")
+    for u in (alice, bob):
+        u.set_password("password")
 
-# Mock dashboard sharing data
-shared_dashboards = []
+    # ── tournaments ----------------------------------------------
+    cup   = Tournament(name="Summer Cup")
+    league= Tournament(name="Winter League")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+    # ── teams -----------------------------------------------------
+    lions   = Team(name="Lions",   tournament=cup,    points=0)
+    tigers  = Team(name="Tigers",  tournament=cup,    points=0)
+    dragons = Team(name="Dragons", tournament=league, points=0)
+    sharks  = Team(name="Sharks",  tournament=league, points=0)
 
-@app.route('/simple')
-def simple():
-    return render_template('simple.html')
+    # ── matches (auto‑update points manually) --------------------
+    m1 = Match(
+        tournament=cup,
+        team1=lions, team2=tigers,
+        team1_score=3, team2_score=1,
+        played_on=date(2025, 5, 5),
+        scorers=[
+            {"player_id": 1, "playerName": "Leo", "goals": 2, "team":"home"},
+            {"player_id": 2, "playerName": "Max", "goals": 1, "team":"home"},
+            {"player_id": 3, "playerName": "Raj", "goals": 1, "team":"away"}
+        ]
+    )
+    lions.points  += 2   # winner
+    tigers.points += 0
 
-@app.route('/squad')
-def squad():
-    return render_template('squad.html')
+    m2 = Match(
+        tournament=league,
+        team1=dragons, team2=sharks,
+        team1_score=2, team2_score=2,
+        played_on=date(2025, 5, 6),
+        scorers=[
+            {"player_id": 4, "playerName": "Kai",  "goals": 1, "team":"home"},
+            {"player_id": 5, "playerName": "Zane", "goals": 1, "team":"home"},
+            {"player_id": 6, "playerName": "Finn", "goals": 2, "team":"away"}
+        ]
+    )
+    dragons.points += 1   # draw
+    sharks.points  += 1
 
-@app.route('/teams')
-def teams():
-    return render_template('squad.html')
+    # ── share example --------------------------------------------
+    # share = Share(sender_id=alice.id, receiver_id=bob.id, match=m1)
 
-@app.route('/team/<team_id>')
-def team_detail(team_id):
-    # In a real app, you would retrieve team data based on team_id
-    return render_template('SingleTeam.html')
-
-@app.route('/SingleTeam')
-def single_team():
-    # This route supports the query parameter format: /SingleTeam?team=TeamName
-    return render_template('SingleTeam.html')
-
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
-
-@app.route('/data')
-def data():
-    return render_template('data.html')
-
-@app.route('/profile')
-def profile():
-    return render_template('profile.html')
-
-@app.route('/login',  methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        return redirect(url_for('home'))
-    return render_template('auth/login.html')
-
-
-@app.route('/signup')
-def signup():
-    return render_template('auth/signup.html')
-
-@app.route('/share-dashboard', methods=['POST'])
-def share_dashboard():
-    """Handle dashboard sharing request"""
-    if request.method == 'POST':
-        dashboard_name = request.form.get('dashboardName')
-        shared_with_json = request.form.get('sharedWith')
-        permission_level = request.form.get('permissionLevel')
-        note = request.form.get('note')
-        
-        # Parse the shared users list
-        try:
-            shared_with = json.loads(shared_with_json)
-        except:
-            shared_with = []
-            
-        # Validate recipient emails exist
-        invalid_emails = [email for email in shared_with if email not in users]
-        
-        if invalid_emails:
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return jsonify({
-                    'success': False, 
-                    'message': f"The following emails are not registered users: {', '.join(invalid_emails)}"
-                })
-            else:
-                flash(f"The following emails are not registered users: {', '.join(invalid_emails)}")
-                return redirect(url_for('dashboard'))
-            
-        # Create sharing record
-        dashboard = {
-            'id': len(shared_dashboards) + 1,
-            'name': dashboard_name,
-            'creator': 'current_user@example.com',  # In a real application, this should be the current logged-in user
-            'shared_with': shared_with,
-            'permission_level': permission_level,
-            'note': note,
-            'created_at': '2025-05-01'  # In a real application, this should use datetime.now()
-        }
-        
-        shared_dashboards.append(dashboard)
-        
-        # Return response as JSON for AJAX requests
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Dashboard shared successfully'})
-        
-        # Non-AJAX request returns redirect
-        flash('Dashboard shared successfully!')
-        return redirect(url_for('dashboard'))
-
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    """API endpoint to get a list of users"""
-    query = request.args.get('q', '').lower()
-    
-    filtered_users = []
-    for email, user_data in users.items():
-        if query in email.lower() or query in user_data['name'].lower():
-            filtered_users.append({
-                'id': user_data['id'],
-                'name': user_data['name'],
-                'email': email
-            })
-    
-    return jsonify(filtered_users)
-
+    # ── commit ----------------------------------------------------
+    db.session.add_all([
+        alice, bob,
+        cup, league,
+        lions, tigers, dragons, sharks,
+        m1, m2
+    ])
+    db.session.commit()
+    print("✅  Seed complete:")
+    print(f"    ➜ Users       : {User.query.count()}")
+    print(f"    ➜ Tournaments : {Tournament.query.count()}")
+    print(f"    ➜ Teams       : {Team.query.count()} (Lions pts {lions.points})")
+    print(f"    ➜ Matches     : {Match.query.count()}")
+# 
 # Run the app
 if __name__ == '__main__':
     server = Server(app.wsgi_app)
     server.serve(debug=True, port=5002)
+
