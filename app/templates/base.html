@@ -77,6 +77,15 @@
           <ul class="flex flex-col md:flex-row md:space-x-8 mt-4 md:mt-0 items-center justify-center h-full">
             <li>
               <a
+                href="/"
+                class="nav-link block transition-colors duration-300"
+                data-page="home"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
                 href="/dashboard"
                 class="nav-link block transition-colors duration-300"
                 data-page="dashboard"
@@ -101,7 +110,7 @@
                 class="nav-link block transition-colors duration-300"
                 data-page="data"
               >
-                Data
+                Matches
               </a>
             </li>
 
@@ -154,7 +163,7 @@
         const currentPath = window.location.pathname;
         
         // Find the matching nav link and add active class
-        let activePage = 'dashboard'; // Default
+        let activePage = 'home'; // Default
         
         if (currentPath.includes('/dashboard')) {
           activePage = 'dashboard';
