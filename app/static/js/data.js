@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     const fileUpload = document.getElementById('fileUpload');
     const addMatchModal = document.getElementById('addMatchModal');
     const viewMatchModal = document.getElementById('viewMatchModal');
+    const shareMatchModal = document.getElementById('shareMatchModal');
     const addMatchForm = document.getElementById('addMatchForm');
+    const shareMatchForm = document.getElementById('shareMatchForm');
     const addScorerBtn = document.getElementById('addScorerBtn');
     const scorersList = document.getElementById('scorersList');
     const matchDataTable = document.getElementById('matchDataTable');
@@ -26,12 +28,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     addDataBtn.addEventListener('click', openAddMatchModal);
     fileUpload.addEventListener('change', handleFileUpload);
     addMatchForm.addEventListener('submit', saveMatchData);
+    shareMatchForm.addEventListener('submit', submitShareForm);
     addScorerBtn.addEventListener('click', addScorerField);
     
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             addMatchModal.style.display = 'none';
             viewMatchModal.style.display = 'none';
+            shareMatchModal.style.display = 'none';
         });
     });
     
@@ -42,6 +46,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (e.target === viewMatchModal) {
             viewMatchModal.style.display = 'none';
+        }
+        if (e.target === shareMatchModal) {
+            shareMatchModal.style.display = 'none';
         }
     });
     
@@ -93,6 +100,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <button class="view-btn action-btn" data-index="${index}">
                         <i class="fas fa-eye mr-1"></i> View
                     </button>
+                    <button class="share-btn action-btn" data-index="${index}">
+                        <i class="fas fa-share-alt mr-1"></i> Share
+                    </button>
                 </td>
             `;
             
@@ -104,6 +114,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             btn.addEventListener('click', function() {
                 const index = this.getAttribute('data-index');
                 viewMatchDetails(sortedData[index]);
+            });
+        });
+        
+        // Add event listeners to the share buttons
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                openShareModal(sortedData[index]);
             });
         });
     }
@@ -443,5 +461,55 @@ document.addEventListener('DOMContentLoaded', async function() {
             toast.warning('Unsupported file format. Please upload a JSON or CSV file.');
             fileUpload.value = '';
         }
+    }
+    
+    // Function to open share modal
+    function openShareModal(match) {
+        // Format match info for display
+        const matchDate = new Date(match.matchDate);
+        const formattedDate = matchDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        const matchInfo = `${match.tournament} - ${formattedDate}
+${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
+        
+        // Set match info in the modal
+        document.getElementById('shareMatchInfo').textContent = matchInfo;
+        
+        // Store match ID in the form for later use
+        shareMatchForm.dataset.matchId = match.id;
+        
+        // Show the modal
+        shareMatchModal.style.display = 'block';
+    }
+    
+    // Function to handle share form submission
+    function submitShareForm(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const recipient = document.getElementById('shareRecipient').value;
+        const matchId = shareMatchForm.dataset.matchId;
+        
+        // Validate form
+        if (!recipient) {
+            toast.error('Please enter a username or email');
+            return;
+        }
+        
+        // Here we would normally send data to the backend
+        // For now, we'll just show a success message
+        
+        // Close modal
+        shareMatchModal.style.display = 'none';
+        
+        // Clear form
+        document.getElementById('shareRecipient').value = '';
+        
+        // Show success toast
+        toast.success(`Match data shared with ${recipient}`);
     }
 }); 

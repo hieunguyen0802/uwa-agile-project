@@ -116,4 +116,13 @@
 
 .delete-btn:hover {
   background-color: #fecaca;
+}
+
+.share-btn {
+  background-color: #f0fdf4;
+  color: #15803d;
+}
+
+.share-btn:hover {
+  background-color: #dcfce7;
 } 
