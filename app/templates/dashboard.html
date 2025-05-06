@@ -1,18 +1,6 @@
-{%extends "base.html" %} 
-{% block title %}Dashboard{% endblock %} 
-{% block content %}
-
-
-<h1 class="text-3xl font-bold text-center text-blue-500">
-  Welcome to the Dashboard Page!
-</h1>
-
-
-
-
-=======
 {% extends "base.html" %} 
-{% block title %}Match Dashboard{% endblock %}
+{% block title %}Match Dashboard
+{% endblock %}
 
 {% block head %}
 <!-- Chart.js for visualizations -->
@@ -323,4 +311,5 @@
 <!-- JavaScript for Dashboard -->
 <script src="{{ url_for('static', filename='js/dashboard_charts.js') }}"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
 {% endblock %}
