@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { api } from "/static/js/apiClient.js";
+document.addEventListener('DOMContentLoaded', async function() {
     // DOM elements
     const addDataBtn = document.getElementById('addDataBtn');
     const fileUpload = document.getElementById('fileUpload');
@@ -14,9 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeButtons = document.querySelectorAll('.close, .close-modal');
     
     // Load match data from localStorage
-    let matchData = JSON.parse(localStorage.getItem('matchData')) || [];
-    
+    //let matchData = JSON.parse(localStorage.getItem('matchData')) || [];
+    //console.log(matchData);
+    let matchData = await api.get("/matches");
     // Display data in the table
+    console.log(matchData);
     displayMatchData();
     
     // Event listeners
@@ -169,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Function to save match data
-    function saveMatchData(e) {
+    async function saveMatchData(e) {
         e.preventDefault();
         
         // Get form values
@@ -207,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create match object
         const match = {
-            id: Date.now().toString(), // Use timestamp as ID
+            // id: Date.now().toString(), // Use timestamp as ID
             matchDate,
             tournament,
             homeTeam,
@@ -218,14 +221,20 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         // Add to match data
-        matchData.push(match);
+        // matchData.push(match);
         
-        // Save to localStorage
-        localStorage.setItem('matchData', JSON.stringify(matchData));
+        // // Save to localStorage
+        // localStorage.setItem('matchData', JSON.stringify(matchData));
         
-        // Update table
+        // // Update table
+        // displayMatchData();
+        
+        // Push to server
+        await api.post("/matches",match)
+
+        matchData = await api.get("/matches");
         displayMatchData();
-        
+
         // Close modal
         addMatchModal.style.display = 'none';
         
@@ -329,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const reader = new FileReader();
         
-        reader.onload = function(event) {
+        reader.onload = async function(event) {
             try {
                 // Determine file type by extension
                 const fileName = file.name.toLowerCase();
@@ -383,9 +392,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     // Generate ID if not present
-                    if (!match.id) {
-                        match.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-                    }
+                    // if (!match.id) {
+                    //     match.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                    // }
                     
                     // Check if match already exists
                     const exists = mergedData.some(m => m.id === match.id);
@@ -396,12 +405,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 // Update match data
-                matchData = mergedData;
+                //matchData = mergedData;
                 
                 // Save to localStorage
-                localStorage.setItem('matchData', JSON.stringify(matchData));
+                //localStorage.setItem('matchData', JSON.stringify(matchData));
                 
                 // Update table
+                //displayMatchData();
+                for (const m of importedData) {
+                    try { await api.post("/matches", m); } catch(e){ console.error(e); }
+                }
+                matchData = await api.get("/matches");
                 displayMatchData();
                 
                 // Show success message with toast

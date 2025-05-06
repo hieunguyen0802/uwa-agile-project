@@ -31,6 +31,7 @@ Ensure you have the following installed on your system:
 
 4. **Run the Flask server**:
     ```bash
+    flask seed # populate the db with seed data
     flask run
     ```
     The server will start at `http://127.0.0.1:5000`.

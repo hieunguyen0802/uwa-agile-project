@@ -1,11 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { api } from "/static/js/apiClient.js";
+document.addEventListener('DOMContentLoaded', async function() {
     // Get team name from URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const teamName = urlParams.get('team');
     
     // Get match data from localStorage
-    const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
-    
+    //const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
+    // getting data from db instead of localstorage
+    let matchData = await api.get("/matches");    
     // Get DOM elements
     const teamDetails = document.getElementById('teamDetails');
     const emptyTeamState = document.getElementById('emptyTeamState');
