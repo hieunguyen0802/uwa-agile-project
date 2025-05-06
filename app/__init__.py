@@ -23,7 +23,9 @@ app.config.update(
 app.debug = True
 app.secret_key = 'your_secret_key'  # 用于flash消息
 db.init_app(app)
-@app.before_first_request
+
+
+#@app.before_first_request
 def _ensure_schema():
     db.create_all() 
 app.register_blueprint(pages_bp)

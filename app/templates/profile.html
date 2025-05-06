@@ -1,48 +1,116 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block title %}Squad {% endblock %}
 {% block content %}
-<div class="min-h-screen bg-gray-100 p-6">
-  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
-    <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">User Profile</h2>
-
-    <div class="flex flex-col items-center mb-6">
-      <img src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Sunglasses&hairColor=Platinum&facialHairType=MoustacheFancy&facialHairColor=Black&clotheType=CollarSweater&clotheColor=Pink&eyeType=Close&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Tanned"
-           alt="Profile Picture"
-           class="w-45 h-45 rounded-full border-4 border-blue-300 shadow-md mb-4" />
-      <h3 class="text-2xl font-semibold text-gray-800">Joseph Google</h3>
-      <p class="text-gray-500">jogo@gmail.com</p>
-    </div>
-
-    <div class="grid gap-4 text-left mb-6">
-      <div class="bg-gray-50 rounded-lg shadow p-4">
-        <label class="block text-sm text-gray-600 font-medium mb-1">Phone</label>
-        <input type="text" disabled value="0123 456 789" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
-      </div>
-
-      <div class="bg-gray-50 rounded-lg shadow p-4">
-        <label class="block text-sm text-gray-600 font-medium mb-1">Address</label>
-        <input type="text" disabled value="123 House St, Perth 6000 WA" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
-      </div>
-
-      <div class="bg-gray-50 rounded-lg shadow p-4">
-        <label class="block text-sm text-gray-600 font-medium mb-1">Birth Date</label>
-        <input type="text" disabled value="Jan. 23, 2004" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
-      </div>
-
-      <div class="bg-gray-50 rounded-lg shadow p-4">
-        <label class="block text-sm text-gray-600 font-medium mb-1">Age</label>
-        <input type="text" disabled value="20" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
-      </div>
-    </div>
-
-    <!-- Logout Button -->
-    <button class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-400 transition duration-300">
-      Logout
-    </button>
+<div class="min-h-screen bg-gray-100 p-6 m-6">
+  <div class="row">
+    <!--  user section -->
+    <div class="col-md-6">
     
+    
+      <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">User Profile</h2>
+    
+        <div class="flex flex-col items-center mb-6">
+          <img
+            src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Sunglasses&hairColor=Platinum&facialHairType=MoustacheFancy&facialHairColor=Black&clotheType=CollarSweater&clotheColor=Pink&eyeType=Close&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Tanned"
+            alt="Profile Picture" class="w-45 h-45 rounded-full border-4 border-blue-300 shadow-md mb-4" />
+          <h3 class="text-2xl font-semibold text-gray-800">Joseph Google</h3>
+          <p class="text-gray-500">jogo@gmail.com</p>
+        </div>
+    
+        <div class="grid gap-4 text-left mb-6">
+          <div class="bg-gray-50 rounded-lg shadow p-4">
+            <label class="block text-sm text-gray-600 font-medium mb-1">Phone</label>
+            <input type="text" disabled value="0123 456 789"
+              class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
+          </div>
+    
+          <div class="bg-gray-50 rounded-lg shadow p-4">
+            <label class="block text-sm text-gray-600 font-medium mb-1">Address</label>
+            <input type="text" disabled value="123 House St, Perth 6000 WA"
+              class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
+          </div>
+    
+          <div class="bg-gray-50 rounded-lg shadow p-4">
+            <label class="block text-sm text-gray-600 font-medium mb-1">Birth Date</label>
+            <input type="text" disabled value="Jan. 23, 2004"
+              class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
+          </div>
+    
+          <div class="bg-gray-50 rounded-lg shadow p-4">
+            <label class="block text-sm text-gray-600 font-medium mb-1">Age</label>
+            <input type="text" disabled value="20" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
+          </div>
+        </div>
+    
+        <!-- Logout Button -->
+        <button class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-400 transition duration-300">
+          Logout
+        </button>
+    
+      </div>
     </div>
+
+    <!--  shared section -->
+    
+    <div class="col-md-6">
+      <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Data shared with user</h2>
+        <div class="space-y-4">
+          <div class="flex flex-col items-center mb-6">
+            <li class="list-group-item m-2">
+              <div class="card h-100 m-2 rounded-lg shadow w-full">
+                <div class="card-header bg-warning text-white">Match result</div>
+                <div class="card-body">
+                  <p class="card-text">Match #1
+                  </p>
+                  <div class="flex items-center justify-center rounded-lg px-4 py-2 mb-4">
+                    <span class="font-bold mr-2">Home Team</span>
+                    <div class="flex items-center justify-center">0 - 0</div>
+                    <span class="font-bold ml-2">Away Team</span>
+                  </div>
+                  <a href="#" class="btn btn-warning m-2">View details</a>
+                </div>
+              </div>
+              <div class="card h-100 m-2 rounded-lg shadow w-full">
+                <div class="card-header bg-danger text-white">Team info</div>
+                <div class="card-body">
+                  <ul class="list-disc pl-5 text-gray-600 space-y-2">
+                    <li>Team Name: Team A</li>
+                    <li>Founded: 2000</li>
+                    <li>Location: City X</li>
+                  </ul>
+                  <a href="#" class="btn btn-danger m-2">View details</a>
+                </div>
+              </div>
+
+              <div class="card h-100 m-2 rounded-lg shadow w-full">
+                <div class="card-header bg-success text-white">Player stats</div>
+                <div class="card-body">
+                  <ul class="list-disc pl-5 text-gray-600 space-y-2">
+                    <li>Player Name: Joseph Google</li>
+                    <li>Position: Forward</li>
+                    <li>Goals Scored: 15</li>
+                    <li>Assists: 8</li>
+                  </ul>
+                  <a href="#" class="btn btn-success m-2">View details</a>
+                </div>
+              </div>
+              
+
+            
+            </li>
+          </div>
+        </div>
+      
+    
+      </div>
+    </div>
+
+
   </div>
 </div>
 
-  
+
+
 {% endblock %}
