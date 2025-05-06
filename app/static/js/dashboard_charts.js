@@ -1,10 +1,22 @@
+const Chart = window.Chart;
+// destroying already preset charts , otherwise error is thrown while applying filters
+function clearChart(id) {
+    const chart = Chart.getChart(id);   // built‑in helper in Chart.js
+    if (chart) chart.destroy();
+}
+// function nukeAllCharts() {
+//     Chart.instances.forEach(inst => inst.destroy());   // v4 helper
+//   }
 function initializeCharts(matchData) {
-    // Clear previous charts
+    // Clear previous charts, 
+    // doesnt work, only destroyes the first chart
     document.querySelectorAll('canvas').forEach(canvas => {
         if (canvas.chart) {
             canvas.chart.destroy();
         }
+        
     });
+    // nukeAllCharts();
     
     // Time Dimension Charts
     createMonthlyMatchesChart(matchData);
@@ -31,6 +43,7 @@ function initializeCharts(matchData) {
 
 // Time Dimension Charts
 function createMonthlyMatchesChart(matchData) {
+    clearChart('monthlyMatchesChart');
     // Process data - count matches by month
     const monthlyCount = {};
     
@@ -85,6 +98,7 @@ function createMonthlyMatchesChart(matchData) {
 }
 
 function createRecentMatchesTrendChart(matchData) {
+    clearChart('recentMatchesChart');
     // Take the 10 most recent matches
     const recentMatches = [...matchData]
         .sort((a, b) => new Date(b.matchDate) - new Date(a.matchDate))
@@ -133,6 +147,7 @@ function createRecentMatchesTrendChart(matchData) {
 }
 
 function createMonthlyAverageScoreChart(matchData) {
+    clearChart('monthlyAverageChart');
     // Process data - calculate average score by month
     const monthlyScores = {};
     const monthlyMatches = {};
@@ -193,6 +208,7 @@ function createMonthlyAverageScoreChart(matchData) {
 
 // Match Dimension Charts
 function createTournamentDistributionChart(matchData) {
+    clearChart('tournamentDistributionChart');
     // Count matches by tournament
     const tournamentCounts = {};
     
@@ -253,6 +269,7 @@ function createTournamentDistributionChart(matchData) {
 }
 
 function createMatchResultsChart(matchData) {
+    clearChart('matchResultsChart');
     // Count match results: wins, draws, losses
     let homeWins = 0;
     let draws = 0;
@@ -314,6 +331,7 @@ function createMatchResultsChart(matchData) {
 }
 
 function createScoreDifferenceChart(matchData) {
+    clearChart('scoreDifferenceChart');
     // Calculate score differences
     const scoreDifferences = matchData.map(match => {
         return Math.abs(parseInt(match.homeScore) - parseInt(match.awayScore));
@@ -375,6 +393,7 @@ function createScoreDifferenceChart(matchData) {
 
 // Team Dimension Charts functions
 function createTeamWinRateChart(matchData) {
+    clearChart('teamWinRateChart');
     // Calculate team statistics
     const teamStats = {};
     
@@ -454,6 +473,7 @@ function createTeamWinRateChart(matchData) {
 }
 
 function createTeamAverageScoreChart(matchData) {
+    clearChart('teamAvgScoreChart');
     // Calculate team scores
     const teamTotalGoals = {};
     const teamMatches = {};
@@ -527,9 +547,10 @@ function createTeamAverageScoreChart(matchData) {
 }
 
 function createHomeAwayPerformanceChart(matchData) {
+    clearChart('homeAwayPerformanceChart');
     // Track home and away performance for teams
     const teamHomeAway = {};
-    
+    console.log(matchData);
     matchData.forEach(match => {
         const homeTeam = match.homeTeam;
         const awayTeam = match.awayTeam;
@@ -554,7 +575,7 @@ function createHomeAwayPerformanceChart(matchData) {
         teamHomeAway[awayTeam].awayMatches++;
         teamHomeAway[awayTeam].awayGoals += awayScore;
     });
-    
+    console.log(teamHomeAway);
     // Calculate average home and away goals
     const teamsWithHomeAwayAvg = Object.keys(teamHomeAway).map(team => {
         const stats = teamHomeAway[team];
@@ -562,9 +583,10 @@ function createHomeAwayPerformanceChart(matchData) {
         const awayAvg = stats.awayMatches > 0 ? (stats.awayGoals / stats.awayMatches).toFixed(2) : 0;
         
         // Only include teams with both home and away matches
-        if (stats.homeMatches === 0 || stats.awayMatches === 0) {
-            return null;
-        }
+        // for now showing the avg calculated , even if teams played only one side
+        // if (stats.homeMatches === 0 || stats.awayMatches === 0) {
+            // return null;
+        // }
         
         return {
             team,
@@ -621,6 +643,8 @@ function createHomeAwayPerformanceChart(matchData) {
 
 // Player Dimension Charts
 function createTopScorersChart(matchData) {
+    clearChart('topScorersChart');
+
     // Aggregate total goals by player
     const playerGoals = {};
     
@@ -684,6 +708,7 @@ function createTopScorersChart(matchData) {
 }
 
 function createPlayerAppearancesChart(matchData) {
+    clearChart('playerAppearancesChart');
     // Count player appearances
     const playerAppearances = {};
     
