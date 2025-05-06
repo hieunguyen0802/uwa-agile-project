@@ -1,7 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { api } from "/static/js/apiClient.js";
+document.addEventListener('DOMContentLoaded', async function() {
     // Load match data from localStorage
-    const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
-    
+    // const matchData = JSON.parse(localStorage.getItem('matchData')) || [];
+    // getting the matches from the db
+    let matchData = await api.get("/matches");
+    // console.log(matchData);    
     // Get filter elements
     const timePeriodFilter = document.getElementById('timePeriodFilter');
     const tournamentFilter = document.getElementById('tournamentFilter');
