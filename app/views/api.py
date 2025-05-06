@@ -68,3 +68,45 @@ def create_match():
 
     db.session.commit()
     return jsonify(match_to_dict(m)), 201
+
+@api_bp.get("/leaderboard/grouped")
+def leaderboard_grouped():
+
+    out = []
+
+    for tour in Tournament.query.order_by(Tournament.name):
+
+        # top 3 teams 
+        teams_q = (Team.query.filter_by(tournament_id=tour.id)
+                          .order_by(Team.points.desc(), Team.name)
+                          .limit(3))
+        top_teams = [{"id": t.id,
+                      "name": t.name,
+                      "points": t.points,
+                      "rank": i + 1}
+                     for i, t in enumerate(teams_q)]
+
+        # aggregate player goals across all matches in this tournament 
+        player_goals = {}
+        matches = Match.query.filter_by(tournament_id=tour.id).all()
+        for m in matches:
+            for s in (m.scorers or []):
+                name  = s.get("player_name") or s.get("playerName")
+                goals = int(s.get("goals", 0))
+                player_goals[name] = player_goals.get(name, 0) + goals
+
+        # sort & take top‑3
+        top_players = [
+            {"name": n, "goals": g, "rank": i + 1}
+            for i, (n, g) in enumerate(
+                sorted(player_goals.items(), key=lambda kv: kv[1], reverse=True)[:3]
+            )
+        ]
+
+        out.append({
+            "tournament": {"id": tour.id, "name": tour.name},
+            "topTeams": top_teams,
+            "topPlayers": top_players,
+        })
+
+    return jsonify(out)
