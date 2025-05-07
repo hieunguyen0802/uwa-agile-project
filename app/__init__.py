@@ -59,9 +59,9 @@ def seed():
     db.create_all()
 
     # users 
-    alice = User(email="alice@example.com", username="alice")
-    bob   = User(email="bob@example.com",   username="bob")
-    rachel= User(email="rachel@example.com", username="rachel")
+    alice = User(email="alice@example.com", username="Alice")
+    bob   = User(email="bob@example.com",   username="Bob")
+    rachel= User(email="rachel@example.com", username="Rachel")
     for u in (alice, bob, rachel):
         u.set_password("password")
 
