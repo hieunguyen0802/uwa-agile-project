@@ -64,7 +64,7 @@ class Match(db.Model):
     team1      = db.relationship("Team", foreign_keys=[team1_id], back_populates="matches_as_team1")
     team2      = db.relationship("Team", foreign_keys=[team2_id], back_populates="matches_as_team2")
 
-    shares     = db.relationship("Share", back_populates="match")  # optional: sharing feature
+    shares     = db.relationship("Share", back_populates="match") # sharing 
 
 # Share  ( need to update this)   
 class Share(db.Model):
@@ -76,3 +76,5 @@ class Share(db.Model):
     sent_at     = db.Column(db.DateTime, default=datetime.utcnow)
 
     match = db.relationship("Match", back_populates="shares")
+    sender   = db.relationship("User", foreign_keys=[sender_id])
+    receiver = db.relationship("User", foreign_keys=[receiver_id])
