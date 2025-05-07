@@ -1,8 +1,9 @@
 from datetime import date
 from flask import Blueprint, jsonify, request, abort
 from sqlalchemy import desc
-from app.models import db, Tournament, Team, Match
-
+from app.models import Share, User, db, Tournament, Team, Match
+from sqlalchemy.exc import NoResultFound
+from flask_login import current_user, login_required
 api_bp = Blueprint("api", __name__)
 
 # according to front ends expectation
@@ -109,4 +110,60 @@ def leaderboard_grouped():
             "topPlayers": top_players,
         })
 
+    return jsonify(out)
+
+
+@api_bp.post("/shares")
+def create_share():
+    data = request.get_json(force=True)
+    match_id   = data.get("match_id")
+    recipient  = data.get("recipient")      # username OR email
+
+    if not (match_id and recipient):
+        abort(400, "match_id and recipient required")
+
+    # find receiver user
+    user_q = User.query
+    if "@" in recipient:
+        user_q = user_q.filter_by(email=recipient)
+    else:
+        user_q = user_q.filter_by(username=recipient)
+    receiver = user_q.first()
+    if not receiver:
+        abort(404, "Recipient not found")
+
+    # ensuring match exists
+    match = Match.query.get_or_404(match_id)
+
+    share = Share(sender_id=current_user.id,
+                  receiver_id=receiver.id,
+                  match=match)
+    db.session.add(share)
+    db.session.commit()
+    return jsonify({"success": True, "share_id": share.id}), 201
+
+
+# GET /shares/received
+@api_bp.get("/shares/received")
+@login_required
+def shares_received():
+    shares = (Share.query
+              .filter_by(receiver_id=current_user.id)
+              .order_by(Share.sent_at.desc())
+              .all())
+
+    out = []
+    for s in shares:
+        m = s.match
+        out.append({
+            "id":         s.id,
+            "sent_at":    s.sent_at.isoformat(timespec="seconds"),
+            "sender":     s.sender.username,
+            "tournament": m.tournament.name,
+            "matchDate":  m.played_on.isoformat(),
+            "homeTeam":   m.team1.name,
+            "awayTeam":   m.team2.name,
+            "homeScore":  m.team1_score,
+            "awayScore":  m.team2_score,
+        })
     return jsonify(out)
