@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Squad {% endblock %}
+{% block title %}You {% endblock %}
 {% block content %}
 <div class="min-h-screen bg-gray-100 p-6 m-6">
   <div class="row">
@@ -55,6 +55,14 @@
     
     <div class="col-md-6">
       <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">
+          Matches Shared With You
+        </h2>
+      
+        <div id="shareList" class="space-y-4"></div>
+        <p id="noSharesMsg" class="text-center text-gray-500">Nothing shared yet.</p>
+      </div>
+      <!-- <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Data shared with user</h2>
         <div class="space-y-4">
           <div class="flex flex-col items-center mb-6">
@@ -104,13 +112,35 @@
         </div>
       
     
-      </div>
+      </div> -->
     </div>
 
 
   </div>
 </div>
 
+<script type="module">
+  import { api } from "/static/js/apiClient.js";
 
+  const list = document.getElementById("shareList");
+  const empty= document.getElementById("noSharesMsg");
+
+  const data = await api.get("/shares/received");
+  if (!data.length) {
+      empty.classList.remove("hidden");
+  } else {
+      empty.classList.add("hidden");
+      list.innerHTML = data.map(s => `
+        <div class="border rounded-lg p-4 shadow">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold">${s.tournament}</span>
+            <span class="text-sm text-gray-500">from ${s.sender}</span>
+          </div>
+          <p class="mb-2">${s.homeTeam} ${s.homeScore}‑${s.awayScore} ${s.awayTeam}</p>
+          <span class="text-xs text-gray-400">${new Date(s.sent_at).toLocaleString()}</span>
+        </div>
+      `).join("");
+  }
+</script>
 
 {% endblock %}

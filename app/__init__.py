@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, f
 from livereload import Server
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
-from flask_login import LoginManager
+from flask_login import LoginManager,login_user, current_user
 from .models import db, Match, Team,Tournament,Share,User  # import after db instance is created
 from .views.pages import pages_bp
 #from .views.debug import debug_bp
@@ -24,13 +24,34 @@ app.debug = True
 app.secret_key = 'your_secret_key'  # 用于flash消息
 db.init_app(app)
 
+#testing sharing
+login_manager = LoginManager()
+login_manager.init_app(app)               
+login_manager.login_view = "pages.login"
 
+@login_manager.user_loader
+def load_user(uid):
+    return db.session.get(User, int(uid))
+
+#remove this after working login signup
+@app.before_request
+def _auto_login_dev():
+    if not getattr(current_user, "is_authenticated", False):
+        user = User.query.first()
+        if user:
+            login_user(user) 
+            
+# gives error, just use flask seed for now
 #@app.before_first_request
 def _ensure_schema():
     db.create_all() 
+    
+    
 app.register_blueprint(pages_bp)
 #app.register_blueprint(debug_bp) 
 app.register_blueprint(api_bp, url_prefix="/api") 
+
+
 @app.cli.command("seed")
 def seed():
     print("Recreating database …")
@@ -38,9 +59,10 @@ def seed():
     db.create_all()
 
     # users 
-    alice = User(email="alice@example.com", username="alice")
-    bob   = User(email="bob@example.com",   username="bob")
-    for u in (alice, bob):
+    alice = User(email="alice@example.com", username="Alice")
+    bob   = User(email="bob@example.com",   username="Bob")
+    rachel= User(email="rachel@example.com", username="Rachel")
+    for u in (alice, bob, rachel):
         u.set_password("password")
 
     # tournaments 
@@ -87,7 +109,7 @@ def seed():
 
     # commit 
     db.session.add_all([
-        alice, bob,
+        alice, bob,rachel,
         cup, league,
         lions, tigers, dragons, sharks,
         m1, m2

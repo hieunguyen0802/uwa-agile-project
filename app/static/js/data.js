@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     const scorersList = document.getElementById('scorersList');
     const matchDataTable = document.getElementById('matchDataTable');
     const emptyState = document.getElementById('emptyState');
+    const userList     = document.getElementById("userList");
+    const shareInput   = document.getElementById("shareRecipient");
+    let suggestTimer;
+
     
     // Close buttons
     const closeButtons = document.querySelectorAll('.close, .close-modal');
@@ -474,7 +478,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         
         const matchInfo = `${match.tournament} - ${formattedDate}
-${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
+        ${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
         
         // Set match info in the modal
         document.getElementById('shareMatchInfo').textContent = matchInfo;
@@ -486,8 +490,24 @@ ${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
         shareMatchModal.style.display = 'block';
     }
     
+    shareInput.addEventListener("input", () => {
+        clearTimeout(suggestTimer);
+        const q = shareInput.value.trim();
+        if (!q) { userList.innerHTML = ""; return; }
+      
+        // debounce 300 ms
+        suggestTimer = setTimeout(async () => {
+          try {
+            const users = await api.get(`/users?q=${encodeURIComponent(q)}`);
+            userList.innerHTML = users.map(u =>
+              `<option value="${u.username || u.email}">${u.username} (${u.email})</option>`
+            ).join("");
+          } catch (e) { console.error(e); }
+        }, 300);
+      });
+
     // Function to handle share form submission
-    function submitShareForm(e) {
+    async function submitShareForm(e) {
         e.preventDefault();
         
         // Get form values
@@ -503,13 +523,23 @@ ${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
         // Here we would normally send data to the backend
         // For now, we'll just show a success message
         
+        try{
+            await api.post("/shares", {
+                match_id:  matchId,
+                recipient: recipient
+            });
+            toast.success(`Match shared with ${recipient}`);
+        } catch (err) {
+            console.error(err);
+            toast.error(err.error || err.failed || "Failed to share match");
+            return;
+        }
+        
+
         // Close modal
         shareMatchModal.style.display = 'none';
         
         // Clear form
         document.getElementById('shareRecipient').value = '';
-        
-        // Show success toast
-        toast.success(`Match data shared with ${recipient}`);
     }
 }); 
