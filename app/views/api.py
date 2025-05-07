@@ -19,6 +19,11 @@ def match_to_dict(m: Match):
         "scorers":      m.scorers or []
     }
 
+@api_bp.errorhandler(400)
+@api_bp.errorhandler(404)
+def _json_error(err):
+    return jsonify({"error": err.description}), err.code
+
 # GET /api/matches 
 @api_bp.get("/matches")
 def all_matches():
@@ -167,3 +172,25 @@ def shares_received():
             "awayScore":  m.team2_score,
         })
     return jsonify(out)
+
+@api_bp.get("/users")
+def list_users():
+   
+    q = request.args.get("q", "").strip().lower()
+
+    # basic search by username OR email substring
+    users_q = User.query
+    if q:
+        users_q = users_q.filter(
+            (User.username.ilike(f"%{q}%")) |
+            (User.email.ilike(f"%{q}%"))
+        )
+
+    return jsonify([
+        {
+            "id":       u.id,
+            "username": u.username,
+            "email":    u.email
+        }
+        for u in users_q.limit(5)        # cap 
+    ])
