@@ -487,7 +487,7 @@ ${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
     }
     
     // Function to handle share form submission
-    function submitShareForm(e) {
+    async function submitShareForm(e) {
         e.preventDefault();
         
         // Get form values
@@ -503,13 +503,23 @@ ${match.homeTeam} ${match.homeScore} - ${match.awayScore} ${match.awayTeam}`;
         // Here we would normally send data to the backend
         // For now, we'll just show a success message
         
+        try{
+            await api.post("/shares", {
+                match_id:  matchId,
+                recipient: recipient
+            });
+            toast.success(`Match shared with ${recipient}`);
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to share match");
+            return;
+        }
+        
+
         // Close modal
         shareMatchModal.style.display = 'none';
         
         // Clear form
         document.getElementById('shareRecipient').value = '';
-        
-        // Show success toast
-        toast.success(`Match data shared with ${recipient}`);
     }
 }); 
