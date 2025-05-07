@@ -1,37 +1,40 @@
-{% extends "auth_base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+</head>
+<body>
+    <h2>Signup</h2>
+    <form id="signupForm">
+        <label>Username:</label>
+        <input type="text" id="username" required><br>
+        <label>Email:</label>
+        <input type="email" id="email" required><br>
+        <label>Password:</label>
+        <input type="password" id="password" required><br>
+        <button type="submit">Signup</button>
+    </form>
+    <p id="responseMessage"></p>
 
-{% block title %}Signup{% endblock %}
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
 
-{% block content %}
-<div class="h-screen flex flex-col lg:flex-row">
-    <div class="flex w-full lg:w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 justify-around items-center p-6">
-        <div class="text-center lg:text-left">
-            <h1 class="text-white font-bold text-4xl font-sans">Tourda </h1>
-            <h1 class="text-white font-bold text-2xl font-sans">All-in-one platform </h1>
-            <p class="text-white text-lg sm:text-xl opacity-80">Unlock tournament insights</p>
-            <p class="text-white text-lg sm:text-xl opacity-80">Effortless data management</p>
-            <p class="text-white text-lg sm:text-xl opacity-80">Game data, simplified</p>
-            <p class="text-white text-lg sm:text-xl opacity-80">Analyze, organize, engage</p>
-        </div>
-    </div>
-    <div class="flex w-full lg:w-1/2 justify-center items-center bg-white p-6">
-        <form class="bg-white w-full max-w-sm">
-            <h1 class="text-gray-800 font-bold text-2xl mb-7">Sign Up!</h1>
-            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-                <input class="pl-2 outline-none border-none" type="text" name="" id=""
-                    placeholder="Email Address" />
-            </div>
-            <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
-                <input class="pl-2 outline-none border-none" type="text" name="" id="" placeholder="Password" />
-            </div>
-            <button type="submit"
-                class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Sign Up</button>
-            <div class="text-center">
-                <span class="text-sm ml-2 cursor-pointer">Already registered? <a href="/login"
-                        class="text-blue-500">Sign-In here</a>
-                </span>
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
+            const res = await fetch("/api/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: document.getElementById("username").value,
+                    email: document.getElementById("email").value,
+                    password: document.getElementById("password").value
+                })
+            });
+
+            const data = await res.json();
+            document.getElementById("responseMessage").innerText = data.message || data.error;
+        });
+    </script>
+</body>
+</html>
