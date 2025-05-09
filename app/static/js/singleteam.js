@@ -172,6 +172,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const winRate = stats.matches > 0 ? Math.round((stats.wins / stats.matches) * 100) : 0;
         document.getElementById('winRateBar').style.width = `${winRate}%`;
         document.getElementById('winRateText').textContent = `${winRate}%`;
+        document.getElementById('winRatePercent').textContent = `${winRate}%`;
         
         // Update other stats
         const goalsPerMatch = stats.matches > 0 ? (stats.goalsFor / stats.matches).toFixed(1) : '0.0';

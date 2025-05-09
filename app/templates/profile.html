@@ -14,11 +14,11 @@
           <img
             src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Sunglasses&hairColor=Platinum&facialHairType=MoustacheFancy&facialHairColor=Black&clotheType=CollarSweater&clotheColor=Pink&eyeType=Close&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Tanned"
             alt="Profile Picture" class="w-45 h-45 rounded-full border-4 border-blue-300 shadow-md mb-4" />
-          <h3 class="text-2xl font-semibold text-gray-800">Joseph Google</h3>
-          <p class="text-gray-500">jogo@gmail.com</p>
+       <h3 class="text-2xl font-semibold text-gray-800">{{ current_user.username }}</h3>
+       <p class="text-gray-500">{{ current_user.email }}</p>
         </div>
     
-        <div class="grid gap-4 text-left mb-6">
+        <!-- <div class="grid gap-4 text-left mb-6">
           <div class="bg-gray-50 rounded-lg shadow p-4">
             <label class="block text-sm text-gray-600 font-medium mb-1">Phone</label>
             <input type="text" disabled value="0123 456 789"
@@ -41,12 +41,13 @@
             <label class="block text-sm text-gray-600 font-medium mb-1">Age</label>
             <input type="text" disabled value="20" class="w-full bg-white border border-gray-300 rounded px-4 py-2" />
           </div>
-        </div>
+        </div> -->
     
         <!-- Logout Button -->
-        <button class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-400 transition duration-300">
+        <a href="{{ url_for('pages.logout') }}"
+          class="block w-full bg-red-500 text-white font-semibold py-2 text-center rounded-lg hover:bg-red-400">
           Logout
-        </button>
+        </a>
     
       </div>
     </div>
