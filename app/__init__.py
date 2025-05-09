@@ -26,20 +26,21 @@ db.init_app(app)
 
 #testing sharing
 login_manager = LoginManager()
-login_manager.init_app(app)               
 login_manager.login_view = "pages.login"
+login_manager.init_app(app)               
+
 
 @login_manager.user_loader
 def load_user(uid):
     return db.session.get(User, int(uid))
 
 #remove this after working login signup
-@app.before_request
-def _auto_login_dev():
-    if not getattr(current_user, "is_authenticated", False):
-        user = User.query.first()
-        if user:
-            login_user(user) 
+# @app.before_request
+# def _auto_login_dev():
+#     if not getattr(current_user, "is_authenticated", False):
+#         user = User.query.first()
+#         if user:
+#             login_user(user) 
             
 # gives error, just use flask seed for now
 #@app.before_first_request
