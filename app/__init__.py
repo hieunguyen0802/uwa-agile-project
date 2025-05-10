@@ -1,57 +1,39 @@
-# filepath: /Users/rachel/Desktop/5505_Group/uwa-agile-project/app/__init__.py
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from livereload import Server
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
-from flask_login import LoginManager,login_user, current_user
-from .models import db, Match, Team,Tournament,Share,User  # import after db instance is created
+from flask_login import LoginManager, login_user, current_user
+from .models import db, Match, Team, Tournament, Share, User
+
+# Blueprints
 from .views.pages import pages_bp
-#from .views.debug import debug_bp
-from .views.api import api_bp   
-#from .views.auth import auth_bp
-import json
-
-
+from .views.api import api_bp
+from .views.debug import debug_bp  # ✅ This is your debug endpoints
 
 app = Flask(__name__)
 app.config.update(
     SQLALCHEMY_DATABASE_URI="sqlite:///tourda.db",
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SECRET_KEY="change-me-in-prod",
-    
 )
+
 app.debug = True
-app.secret_key = 'your_secret_key'  # 用于flash消息
+app.secret_key = 'your_secret_key'
 db.init_app(app)
 
-#testing sharing
+# Login Manager Setup
 login_manager = LoginManager()
 login_manager.login_view = "pages.login"
-login_manager.init_app(app)               
-
+login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(uid):
     return db.session.get(User, int(uid))
 
-#remove this after working login signup
-# @app.before_request
-# def _auto_login_dev():
-#     if not getattr(current_user, "is_authenticated", False):
-#         user = User.query.first()
-#         if user:
-#             login_user(user) 
-            
-# gives error, just use flask seed for now
-#@app.before_first_request
-def _ensure_schema():
-    db.create_all() 
-    
-    
+# Register Blueprints (✅ Register before app runs)
 app.register_blueprint(pages_bp)
-#app.register_blueprint(debug_bp) 
-app.register_blueprint(api_bp, url_prefix="/api") 
-
+app.register_blueprint(api_bp, url_prefix="/api")
+app.register_blueprint(debug_bp)
 
 @app.cli.command("seed")
 def seed():
@@ -88,7 +70,7 @@ def seed():
             {"player_id": 3, "playerName": "Raj", "goals": 1, "team":"away"}
         ]
     )
-    lions.points  += 2   # winner
+    lions.points  += 2
     tigers.points += 0
 
     m2 = Match(
@@ -102,15 +84,12 @@ def seed():
             {"player_id": 6, "playerName": "Finn", "goals": 2, "team":"away"}
         ]
     )
-    dragons.points += 1   # draw
+    dragons.points += 1
     sharks.points  += 1
-
-    # share example 
-    # share = Share(sender_id=alice.id, receiver_id=bob.id, match=m1)
 
     # commit 
     db.session.add_all([
-        alice, bob,rachel,
+        alice, bob, rachel,
         cup, league,
         lions, tigers, dragons, sharks,
         m1, m2
@@ -121,9 +100,8 @@ def seed():
     print(f"    ➜ Tournaments : {Tournament.query.count()}")
     print(f"    ➜ Teams       : {Team.query.count()} (Lions pts {lions.points})")
     print(f"    ➜ Matches     : {Match.query.count()}")
-# 
-# Run the app
+
+# ✅ Run the app
 if __name__ == '__main__':
     server = Server(app.wsgi_app)
-    server.serve(debug=True, port=5002)
-
+    server.serve(debug=True, port=5000)
