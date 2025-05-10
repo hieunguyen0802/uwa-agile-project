@@ -1,24 +1,15 @@
-<!-- filepath: /Users/rachel/Desktop/5505_Group/uwa-agile-project/app/templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %} Tourna {% endblock%}</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/main.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
+
     <style>
       .nav-link {
         position: relative;
@@ -26,12 +17,12 @@
         color: white;
         transition: all 0.3s ease;
       }
-      
+
       .nav-link:hover {
-        color: #93c5fd; /* blue-300 */
+        color: #93c5fd;
         transform: translateY(-2px);
       }
-      
+
       .nav-link::after {
         content: '';
         position: absolute;
@@ -39,20 +30,20 @@
         height: 2px;
         bottom: 0;
         left: 50%;
-        background-color: #93c5fd; /* blue-300 */
+        background-color: #93c5fd;
         transition: all 0.3s ease;
         transform: translateX(-50%);
       }
-      
+
       .nav-link:hover::after {
         width: 70%;
       }
-      
+
       .nav-link.active {
-        color: #93c5fd; /* blue-300 */
+        color: #93c5fd;
         font-weight: 500;
       }
-      
+
       .nav-link.active::after {
         width: 70%;
         background-color: white;
@@ -63,69 +54,37 @@
 
   <body>
     <nav class="bg-gradient-to-tr from-blue-800 to-purple-700 shadow-md">
-      <div
-        class="container mx-auto flex flex-wrap items-center justify-between px-4 py-3"
-      >
+      <div class="container mx-auto flex flex-wrap items-center justify-between px-4 py-3">
         <a href="/" class="text-2xl font-bold text-white">OurLogo</a>
-        
-        <!-- Mobile menu button -->
+
         <button id="mobile-menu-toggle" class="md:hidden text-white focus:outline-none">
           <i class="fas fa-bars text-xl"></i>
         </button>
-        
+
         <div class="w-full md:flex md:items-center md:w-auto hidden" id="menu">
           <ul class="flex flex-col md:flex-row md:space-x-8 mt-4 md:mt-0 items-center justify-center h-full">
             <li>
-              <a
-                href="/"
-                class="nav-link block transition-colors duration-300"
-                data-page="home"
-              >
-                Home
-              </a>
+              <a href="/" class="nav-link block transition-colors duration-300" data-page="home">Home</a>
             </li>
             <li>
-              <a
-                href="/dashboard"
-                class="nav-link block transition-colors duration-300"
-                data-page="dashboard"
-              >
-                Dashboard
-              </a>
+              <a href="/dashboard" class="nav-link block transition-colors duration-300" data-page="dashboard">Dashboard</a>
             </li>
-            
             <li>
-              <a
-                href="/teams"
-                class="nav-link block transition-colors duration-300"
-                data-page="teams"
-              >
-                Teams
-              </a>
+              <a href="/teams" class="nav-link block transition-colors duration-300" data-page="teams">Teams</a>
+            </li>
+            <li>
+              <a href="/data" class="nav-link block transition-colors duration-300" data-page="data">Matches</a>
             </li>
 
+            <!-- ✅ Sports-themed Avatar Icon -->
             <li>
-              <a
-                href="/data"
-                class="nav-link block transition-colors duration-300"
-                data-page="data"
-              >
-                Matches
-              </a>
-            </li>
-
-            <!-- Avatar Link -->
-            <li>
-              <a
-                href="/profile"
-                class="block text-white transition-colors duration-300"
-                title="Profile"
-                data-page="profile"
-              >
-                <div
-                  class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center transform transition-all duration-300 hover:bg-blue-400 hover:scale-110"
-                >
-                  <span class="font-bold text-sm">AB</span> <!-- Replace with initials -->
+              <a href="/profile" class="block text-white transition-colors duration-300" title="Profile" data-page="profile">
+                <div class="w-10 h-10 rounded-full bg-white shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-110">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/861/861512.png"
+                    alt="Profile Icon"
+                    class="w-full h-full object-cover"
+                  />
                 </div>
               </a>
             </li>
@@ -135,36 +94,34 @@
     </nav>
 
     <main class="container mx-auto mt-4">
-      {% with messages = get_flashed_messages() %} {% if messages %}
-      <div class="alert alert-info" role="alert">
-        {% for message in messages %} {{ message }}<br />
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %} {% block content %} {% endblock %}
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="alert alert-info" role="alert">
+            {% for message in messages %}
+              {{ message }}<br />
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %} {% endblock %}
     </main>
 
-    <!-- component -->
-    <!-- Foooter -->
+    <!-- Footer -->
     <section class="bg-white">
-      <div
-        class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8"
-      >
+      <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
         <p class="mt-8 text-base leading-6 text-center text-gray-400">
           © 2025 UWA Agile Project, Group 5 Sem 2 -2025.
         </p>
       </div>
     </section>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Get current page path
+      document.addEventListener('DOMContentLoaded', function () {
         const currentPath = window.location.pathname;
-        
-        // Find the matching nav link and add active class
-        let activePage = 'home'; // Default
-        
+        let activePage = 'home';
         if (currentPath.includes('/dashboard')) {
           activePage = 'dashboard';
         } else if (currentPath.includes('/teams') || currentPath.includes('/SingleTeam')) {
@@ -174,19 +131,16 @@
         } else if (currentPath.includes('/profile')) {
           activePage = 'profile';
         }
-        
-        // Add active class to the matching nav link
+
         const activeNavLink = document.querySelector(`.nav-link[data-page="${activePage}"]`);
         if (activeNavLink) {
           activeNavLink.classList.add('active');
         }
-        
-        // Mobile menu toggle
+
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const menu = document.getElementById('menu');
-        
         if (mobileMenuToggle) {
-          mobileMenuToggle.addEventListener('click', function() {
+          mobileMenuToggle.addEventListener('click', function () {
             menu.classList.toggle('hidden');
           });
         }
